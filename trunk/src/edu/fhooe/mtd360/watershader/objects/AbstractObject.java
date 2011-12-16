@@ -1,10 +1,17 @@
 package edu.fhooe.mtd360.watershader.objects;
 
 import org.lwjgl.opengl.ARBShaderObjects;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Renderable;
 
 import edu.fhooe.mtd360.watershader.render.shader.Shader;
 
+/**
+ * Abstract class for implementing scene objects
+ * 
+ * @author TAKERU
+ *
+ */
 public abstract class AbstractObject implements Renderable {
 	
 	private Shader shader = null;
@@ -21,6 +28,8 @@ public abstract class AbstractObject implements Renderable {
 	public void render() {
 		//if shader given, use it
 		if (shader != null) ARBShaderObjects.glUseProgramObjectARB(this.shader.getProgram());
+		
+		GL11.glLoadIdentity();
 		
 		//draw the object
 		this.draw();

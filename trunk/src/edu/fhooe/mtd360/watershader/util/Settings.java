@@ -15,6 +15,10 @@ import java.util.Properties;
  */
 public class Settings {
 	
+	public static final String WINDOW_WIDTH = "windowWidth";
+	public static final String WINDOW_HEIGHT = "windowHeight";
+	public static final String APPLICATION_NAME = "applicationName";
+	
 	public static final String defaultFileName = "settings.cfg";
 	
 	private static Settings instance = null;
@@ -94,6 +98,7 @@ public class Settings {
 			
 			instance.loadProperties();
 			
+			instance.settings.list(System.out);
 			
 			saveProperties();
 		}

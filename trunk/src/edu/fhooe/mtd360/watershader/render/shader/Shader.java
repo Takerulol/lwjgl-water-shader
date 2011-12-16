@@ -78,7 +78,7 @@ public class Shader {
         if(!printLogInfo(fragShader)){
             fragShader=0;
         }
-
+        
         return fragShader;
 	}
 
