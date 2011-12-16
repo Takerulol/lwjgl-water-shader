@@ -11,6 +11,13 @@ import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL20;
 
+/**
+ * Base class for shader objects. Needs to be extended for further usage.
+ * Just pass the shader files name into the super constructor.
+ * 
+ * @author TAKERU
+ *
+ */
 public class Shader {
 	//shaders folder
 	private static final String FOLDER = "shaders/";

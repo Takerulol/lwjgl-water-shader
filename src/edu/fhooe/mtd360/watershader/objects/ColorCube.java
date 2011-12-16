@@ -13,7 +13,7 @@ import edu.fhooe.mtd360.watershader.util.ColorTool;
  */
 public class ColorCube extends AbstractObject {
 
-	private float drehdich = 0f;
+	private float turnAround = 0f;
 	
 	public ColorCube() {
 		setShaderProgram(new LambertShader());
@@ -22,11 +22,11 @@ public class ColorCube extends AbstractObject {
 	@Override
 	public void draw() {
 		
-		ColorTool.setDiffuseColor(0f, 1f, 0f, 1f);
+		ColorTool.setDiffuseMaterialColor(0f, 1f, 0f, 1f);
 		
-	        GL11.glTranslatef(1.5f,0.0f,-7.0f);             // Move Right 1.5 Units And Into The Screen 6.0
-	        GL11.glRotatef(1f*drehdich++,1.0f,1.0f,1.0f);               // Rotate The Quad On The X axis ( NEW )
-	        GL11.glColor3f(0.5f,0.5f,1.0f);                 // Set The Color To Blue One Time Only
+		GL11.glTranslatef(1.5f, 0.0f, -7.0f); // Move Right 1.5 Units And Into The Screen 6.0
+		GL11.glRotatef(1f * turnAround++, 1.0f, 1.0f, 1.0f); // Rotate The Quad On The X axis ( NEW )
+		GL11.glColor3f(0.5f, 0.5f, 1.0f); // Set The Color To Blue One Time Only
 		
 		
 		GL11.glBegin(GL11.GL_QUADS); // Draw A Quad

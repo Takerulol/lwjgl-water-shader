@@ -38,6 +38,11 @@ public abstract class AbstractObject implements Renderable {
 		if (shader != null) ARBShaderObjects.glUseProgramObjectARB(0);
 	}
 	
+	/**
+	 * Sets a shader for the object
+	 * 
+	 * @param shader
+	 */
 	public void setShaderProgram(Shader shader) {
 		this.shader = shader;
 	}

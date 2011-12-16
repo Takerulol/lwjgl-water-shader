@@ -10,7 +10,6 @@ import org.lwjgl.util.glu.GLU;
 
 import edu.fhooe.mtd360.watershader.objects.ColorCube;
 import edu.fhooe.mtd360.watershader.objects.WaterPlain;
-import edu.fhooe.mtd360.watershader.util.LightTool;
 import edu.fhooe.mtd360.watershader.util.Settings;
 
 public class Renderer {

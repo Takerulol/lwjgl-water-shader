@@ -30,9 +30,10 @@ public class Settings {
 			"Water Shader Settings \n" +
 			"#made by Christian Bollmann & Nils Juettemeier";
 	
-	private Settings() {
-		
-	}
+	/**
+	 * Empty constructor to make sure that the object in created before filling it.
+	 */
+	private Settings() {}
 	
 	private void loadProperties() {
 		if (this.file.exists() && !this.file.isDirectory()) {
@@ -48,8 +49,9 @@ public class Settings {
 		}
 	}
 		
-		
-	
+	/**
+	 * Saves settings to settings-file
+	 */
 	public static void saveProperties() {
 		checkInstance();
 		try {
@@ -67,16 +69,31 @@ public class Settings {
 		}
 	}
 
+	/**
+	 * Gets integer values of specific key
+	 * @param key
+	 * @return
+	 */
 	public static int getIntSetting(String key) {
 		checkInstance();
 		return Integer.parseInt(Settings.instance.settings.getProperty(key));
 	}
 	
+	/**
+	 * Gets string value of specific key
+	 * @param key
+	 * @return
+	 */
 	public static String getStringSetting(String key) {
 		checkInstance();
 		return Settings.instance.settings.getProperty(key);
 	}
 
+	/**
+	 * Gets float values of specific key
+	 * @param key
+	 * @return
+	 */
 	public static Float getFloatSetting(String key) {
 		checkInstance();
 		return Float.parseFloat(Settings.instance.settings.getProperty(key));
