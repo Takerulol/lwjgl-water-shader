@@ -2,8 +2,10 @@ package edu.fhooe.mtd360.watershader;
 
 import java.io.IOException;
 
+import edu.fhooe.mtd360.watershader.render.Renderer;
+
 /**
- * TODO: Initial app, just change to actual content
+ * L)OLOLOLOLOL START LOLOLOOL
  * 
  * @author TAKERU
  *
@@ -15,9 +17,7 @@ public class App {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
-		System.out.println("This is an app!");
-		System.out.println("Press any key to continue...");
-		System.in.read();
+		new Renderer();
 	}
 
 }
