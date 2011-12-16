@@ -5,7 +5,8 @@ import java.io.IOException;
 import edu.fhooe.mtd360.watershader.render.Renderer;
 
 /**
- * L)OLOLOLOLOL START LOLOLOOL
+ * Main Application!
+ * Starts the renderer
  * 
  * @author TAKERU
  *

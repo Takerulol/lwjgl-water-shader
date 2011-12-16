@@ -1,6 +1,8 @@
 package edu.fhooe.mtd360.watershader.render.shader;
 
 /**
+ * Water Shader
+ * 
  * TODO: implement me!
  * 
  * @author TAKERU

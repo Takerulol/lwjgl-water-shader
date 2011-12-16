@@ -24,7 +24,7 @@ public class WaterPlain extends AbstractObject {
 		GL11.glTranslatef(0.0f, -10.0f, -10.0f);
 		GL11.glScalef(100f, 100f, 100f);
 		
-		ColorTool.setDiffuseColor(0f, 0f, 1f, 1f);
+		ColorTool.setDiffuseMaterialColor(0f, 0f, 1f, 1f);
 		
 		GL11.glBegin(GL11.GL_QUADS);
 			GL11.glNormal3f(1f, 1f, 1f);
