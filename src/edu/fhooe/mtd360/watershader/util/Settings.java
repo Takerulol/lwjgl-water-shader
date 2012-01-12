@@ -108,7 +108,7 @@ public class Settings {
 			
 			instance.file = new File(Settings.defaultFileName);
 			
-			instance.settings = new Properties(System.getProperties());
+			instance.settings = new SortedProperties(System.getProperties());
 			
 
 			initSettings();

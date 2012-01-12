@@ -23,7 +23,7 @@ public class ColorCube extends AbstractObject {
 	public void draw() {
 		
 		ColorTool.setDiffuseMaterialColor(0f, 1f, 0f, 1f);
-		
+
 		GL11.glTranslatef(1.5f, 0.0f, -7.0f); // Move Right 1.5 Units And Into The Screen 6.0
 		GL11.glRotatef(1f * turnAround++, 1.0f, 1.0f, 1.0f); // Rotate The Quad On The X axis ( NEW )
 		GL11.glColor3f(0.5f, 0.5f, 1.0f); // Set The Color To Blue One Time Only
