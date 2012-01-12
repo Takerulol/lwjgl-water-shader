@@ -9,6 +9,7 @@ import org.lwjgl.util.Renderable;
 import org.lwjgl.util.glu.GLU;
 
 import edu.fhooe.mtd360.watershader.objects.ColorCube;
+import edu.fhooe.mtd360.watershader.objects.TexturePlain;
 import edu.fhooe.mtd360.watershader.objects.WaterPlain;
 import edu.fhooe.mtd360.watershader.util.Settings;
 
@@ -53,6 +54,7 @@ public class Renderer {
 	private void initObjects() {
 		addObject(new WaterPlain());
 		addObject(new ColorCube());
+		addObject(new TexturePlain());
 		
 		//LightTool.enableDirectionalLight();
 	}
@@ -87,6 +89,7 @@ public class Renderer {
 		GL11.glDepthFunc(GL11.GL_LEQUAL);
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 		GL11.glEnable(GL11.GL_LIGHTING);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 
 	}
 
