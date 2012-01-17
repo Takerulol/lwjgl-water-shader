@@ -44,74 +44,70 @@ public class Renderer{
 		initObjects();
 		
 		while(!done){		
-						
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				System.out.println("The thread's \"sleep\" was interrupted.");
-				e.printStackTrace();
-			}
-			
+
 			render();
-			Display.update();
-			
-			if(Mouse.isInsideWindow() && Mouse.isButtonDown(1)){
-				mouseClicked = false;
-				prevMouseX = 0;
-				prevMouseY = 0;	
-				camPosX = 0;
-				camPosY = 0;
-				camPosZ = 0;
-				//camRoll = 0;
-				camPitch = 0;
-				camYaw = 0;
-			}
-			if(Mouse.isInsideWindow() && Mouse.isButtonDown(0)){
-				int currentMouseX = Mouse.getX() - prevMouseX;
-				int currentMouseY = Mouse.getY() - prevMouseY;
-				prevMouseX = Mouse.getX();
-				prevMouseY = Mouse.getY();
-				if(mouseClicked){
-					//camRoll += currentMouseX;
-					//camRoll %= 360;
-					camPitch += currentMouseY;
-					camPitch %= 360;
-					camYaw += currentMouseX;
-					camYaw %= 360;
-				}
-				else
-					mouseClicked = true;
-			}
-			if(Mouse.isInsideWindow() && !Mouse.isButtonDown(0)){
-				mouseClicked = false;
-			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W)){
-				camPosX += (Math.sin(Math.toRadians(camYaw)) * DAMPER);
-				camPosY += (Math.sin(Math.toRadians(camPitch)) * DAMPER);
-				camPosZ += (Math.cos(Math.toRadians(camYaw)) * DAMPER);
-			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN) || Keyboard.isKeyDown(Keyboard.KEY_S)){
-				camPosX -= (Math.sin(Math.toRadians(camYaw)) * DAMPER);
-				camPosY -= (Math.sin(Math.toRadians(camPitch)) * DAMPER);
-				camPosZ -= (Math.cos(Math.toRadians(camYaw)) * DAMPER);
-			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A)){
-				camPosX += (Math.sin(Math.toRadians(camYaw - 90)) * DAMPER);
-				camPosZ += (Math.cos(Math.toRadians(camYaw - 90)) * DAMPER);
-			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT) || Keyboard.isKeyDown(Keyboard.KEY_D)){
-				camPosX -= (Math.sin(Math.toRadians(camYaw - 90)) * DAMPER);
-				camPosZ -= (Math.cos(Math.toRadians(camYaw - 90)) * DAMPER);
-			}
-			//must be last key checked to avoid error messages
-			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
-				done = true;
-			}
+			handleInputs();
 			updateCamera();
+			Display.update();
 		}
 		
 		Display.destroy();
 		frame.dispose();
+	}
+
+	private void handleInputs() {
+		if(Mouse.isInsideWindow() && Mouse.isButtonDown(1)){
+			mouseClicked = false;
+			prevMouseX = 0;
+			prevMouseY = 0;	
+			camPosX = 0;
+			camPosY = 0;
+			camPosZ = 0;
+			//camRoll = 0;
+			camPitch = 0;
+			camYaw = 0;
+		}
+		if(Mouse.isInsideWindow() && Mouse.isButtonDown(0)){
+			int currentMouseX = Mouse.getX() - prevMouseX;
+			int currentMouseY = Mouse.getY() - prevMouseY;
+			prevMouseX = Mouse.getX();
+			prevMouseY = Mouse.getY();
+			if(mouseClicked){
+				//camRoll += currentMouseX;
+				//camRoll %= 360;
+				camPitch += currentMouseY;
+				camPitch %= 360;
+				camYaw += currentMouseX;
+				camYaw %= 360;
+			}
+			else
+				mouseClicked = true;
+		}
+		if(Mouse.isInsideWindow() && !Mouse.isButtonDown(0)){
+			mouseClicked = false;
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W)){
+			camPosX += (Math.sin(Math.toRadians(camYaw)) * DAMPER);
+			camPosY += (Math.sin(Math.toRadians(camPitch)) * DAMPER);
+			camPosZ += (Math.cos(Math.toRadians(camYaw)) * DAMPER);
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_DOWN) || Keyboard.isKeyDown(Keyboard.KEY_S)){
+			camPosX -= (Math.sin(Math.toRadians(camYaw)) * DAMPER);
+			camPosY -= (Math.sin(Math.toRadians(camPitch)) * DAMPER);
+			camPosZ -= (Math.cos(Math.toRadians(camYaw)) * DAMPER);
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A)){
+			camPosX += (Math.sin(Math.toRadians(camYaw - 90)) * DAMPER);
+			camPosZ += (Math.cos(Math.toRadians(camYaw - 90)) * DAMPER);
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT) || Keyboard.isKeyDown(Keyboard.KEY_D)){
+			camPosX -= (Math.sin(Math.toRadians(camYaw - 90)) * DAMPER);
+			camPosZ -= (Math.cos(Math.toRadians(camYaw - 90)) * DAMPER);
+		}
+		//must be last key checked to avoid error messages
+		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
+			done = true;
+		}
 	}
 	
 	private void updateCamera(){
@@ -136,29 +132,18 @@ public class Renderer{
 
 		Settings.init();
 		
-		final Canvas canvas = new Canvas();
 		this.objects = new Vector<Renderable>();
 		width = Settings.getIntSetting(Settings.WINDOW_WIDTH);
 		height = Settings.getIntSetting(Settings.WINDOW_HEIGHT);		
-		frame = new Frame(Settings.APPLICATION_NAME);
-
-		frame.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				done = true;
-			}
-		});
-		canvas.setSize(width, height);
-		frame.add(canvas, BorderLayout.CENTER);
-		frame.pack();
 		
 		try{
-			Display.setParent(canvas);
+			
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setVSyncEnabled(true);
 			Display.setTitle(Settings.getStringSetting(Settings.APPLICATION_NAME));
 			Display.create();
-	        frame.setVisible(true);
+			
+		
 			
 			GL11.glViewport(0, 0, width, height);
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
