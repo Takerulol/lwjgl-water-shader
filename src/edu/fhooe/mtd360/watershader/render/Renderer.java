@@ -1,6 +1,5 @@
 package edu.fhooe.mtd360.watershader.render;
 
-import java.awt.Frame;
 import java.util.Vector;
 
 import org.lwjgl.LWJGLException;
@@ -20,7 +19,6 @@ public class Renderer{
 
 	private boolean done = false;	
 	private Vector<Renderable> objects;
-	private Frame frame;
 	private int width;
 	private int height;
 	
@@ -48,7 +46,6 @@ public class Renderer{
 		}
 		
 		Display.destroy();
-		frame.dispose();
 	}
 
 	private void handleInputs() {
