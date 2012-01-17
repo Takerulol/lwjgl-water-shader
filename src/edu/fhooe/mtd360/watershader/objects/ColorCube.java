@@ -1,6 +1,13 @@
 package edu.fhooe.mtd360.watershader.objects;
 
+import java.io.IOException;
+
+import org.lwjgl.opengl.ARBMultitexture;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
 import edu.fhooe.mtd360.watershader.render.shader.LambertShader;
 import edu.fhooe.mtd360.watershader.util.ColorTool;
@@ -14,9 +21,16 @@ import edu.fhooe.mtd360.watershader.util.ColorTool;
 public class ColorCube extends AbstractObject {
 
 	private float turnAround = 0f;
+	private Texture texture;
 	
 	public ColorCube() {
 		setShaderProgram(new LambertShader());
+		
+		try {
+			texture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("images/wavemap.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -28,6 +42,10 @@ public class ColorCube extends AbstractObject {
 		GL11.glRotatef(1f * turnAround++, 1.0f, 1.0f, 1.0f); // Rotate The Quad On The X axis ( NEW )
 		GL11.glColor3f(0.5f, 0.5f, 1.0f); // Set The Color To Blue One Time Only
 		
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		ARBMultitexture.glActiveTextureARB(ARBMultitexture.GL_TEXTURE3_ARB);
+//		ARBMultitexture.gl
+		texture.bind();
 		
 		GL11.glBegin(GL11.GL_QUADS); // Draw A Quad
 			GL11.glNormal3f(0f, 1f, 0f);
