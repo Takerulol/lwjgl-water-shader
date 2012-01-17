@@ -116,7 +116,7 @@ public class Renderer{
 	private void initObjects() {
 		addObject(new WaterPlain());
 		addObject(new ColorCube());
-		addObject(new TexturePlain());
+		addObject(new TexturePlain("images/wavemap.png"));
 		
 		//LightTool.enableDirectionalLight();
 	}

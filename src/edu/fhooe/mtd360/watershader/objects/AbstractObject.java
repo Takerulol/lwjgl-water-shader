@@ -43,7 +43,7 @@ public abstract class AbstractObject implements Renderable {
 	 * 
 	 * @param shader
 	 */
-	public void setShaderProgram(Shader shader) {
+	public void setShaderProgram(Shader shader){
 		this.shader = shader;
 	}
 }
