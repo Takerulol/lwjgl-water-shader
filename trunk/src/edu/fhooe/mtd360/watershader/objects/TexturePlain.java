@@ -3,6 +3,7 @@ package edu.fhooe.mtd360.watershader.objects;
 import java.io.IOException;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
@@ -27,6 +28,7 @@ public class TexturePlain extends AbstractObject {
 		GL11.glTranslatef(0f, 0f, -3f);
 		
 		//GL11.GL_CL
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		
 		texture.bind();
 		GL11.glBegin(GL11.GL_QUADS);
