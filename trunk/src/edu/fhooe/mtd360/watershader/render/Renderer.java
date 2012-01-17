@@ -1,9 +1,5 @@
 package edu.fhooe.mtd360.watershader.render;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.Frame;
 import java.util.Vector;
 
