@@ -27,8 +27,8 @@ public class TexturePlain extends AbstractObject {
 		GL11.glLoadIdentity();
 		GL11.glTranslatef(0f, 0f, -3f);
 		
-		//GL11.GL_CL
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		texture.bind();
 		
 		texture.bind();
 		GL11.glBegin(GL11.GL_QUADS);
