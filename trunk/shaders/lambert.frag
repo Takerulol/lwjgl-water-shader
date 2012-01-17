@@ -3,6 +3,6 @@ varying vec3 L;
 
 void main()
 { 
-    float lambert = dot(normalize(L),normalize(N));
+    float lambert = max(0.0, dot(normalize(L),normalize(N)));
     gl_FragColor = vec4(gl_FrontMaterial.diffuse.xyz*lambert,1.0);
 }

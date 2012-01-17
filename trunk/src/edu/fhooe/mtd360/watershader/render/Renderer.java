@@ -17,7 +17,6 @@ import edu.fhooe.mtd360.watershader.util.Settings;
 
 public class Renderer{
 
-	private boolean done = false;	
 	private Vector<Renderable> objects;
 	private int width;
 	private int height;
@@ -31,14 +30,13 @@ public class Renderer{
 	//private int camRoll = 0;
 	private int camPitch = 0;
 	private int camYaw = 0;
-	private final float DAMPER = .5f;
+	private final float DAMPER = .1f;
 	
 	public Renderer() {
 		setup();
 		initObjects();
 		
-		while(!done){		
-
+		while(!Display.isCloseRequested()){
 			render();
 			handleInputs();
 			updateCamera();
@@ -99,7 +97,7 @@ public class Renderer{
 		}
 		//must be last key checked to avoid error messages
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
-			done = true;
+			Display.destroy();
 		}
 	}
 	
@@ -134,9 +132,7 @@ public class Renderer{
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setVSyncEnabled(true);
 			Display.setTitle(Settings.getStringSetting(Settings.APPLICATION_NAME));
-			Display.create();
-			
-		
+			Display.create();		
 			
 			GL11.glViewport(0, 0, width, height);
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -154,7 +150,7 @@ public class Renderer{
 		}
 		catch (LWJGLException exc){
 			System.out.println("Error creating display, exiting.");
-			done = true;
+			Display.destroy();
 		}
 	}
 
