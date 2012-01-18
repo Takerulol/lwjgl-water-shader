@@ -12,8 +12,8 @@ import org.lwjgl.util.Renderable;
 import org.lwjgl.util.glu.GLU;
 
 import edu.fhooe.mtd360.watershader.objects.ColorCube;
-import edu.fhooe.mtd360.watershader.objects.TexturePlain;
-import edu.fhooe.mtd360.watershader.objects.WaterPlain;
+import edu.fhooe.mtd360.watershader.objects.ColorPlane;
+import edu.fhooe.mtd360.watershader.objects.WaterPlane;
 import edu.fhooe.mtd360.watershader.util.Settings;
 
 public class Renderer{
@@ -114,9 +114,9 @@ public class Renderer{
 	}
 
 	private void initObjects() {
-		addObject(new WaterPlain());
-		addObject(new ColorCube());
-		addObject(new TexturePlain("images/wavemap.png"));
+		addObject(new WaterPlane("images/wavemap.png"));
+		addObject(new ColorCube(1f, .5f, 0f, 1f));
+		addObject(new ColorPlane(0f, 0f, 1f, 1f));
 		
 		//LightTool.enableDirectionalLight();
 	}
