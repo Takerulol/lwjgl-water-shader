@@ -15,12 +15,12 @@ import org.lwjgl.opengl.GL13;
 
 import edu.fhooe.mtd360.watershader.render.shader.WaterShader;
 
-public class TexturePlain extends AbstractObject {
+public class WaterPlane extends AbstractObject {
 
 	private int shader;
 	private int textureA = 0;
 	
-	public TexturePlain(String filename){		
+	public WaterPlane(String filename){		
 		if(new File(filename).exists()){		
 			WaterShader ws = new WaterShader(1, 1);
 			setShaderProgram(ws);
@@ -29,7 +29,6 @@ public class TexturePlain extends AbstractObject {
 				 System.out.println("Texture could not be set up");
 			else
 				shader = ws.getProgram();
-			//System.out.println("Shader: "+shader);
 		}
 		else{
 			System.out.println("File "+filename+" not found.");
@@ -75,6 +74,8 @@ public class TexturePlain extends AbstractObject {
 	
 	@Override
 	public void draw() {
+		
+		GL11.glLoadIdentity();
 
 		ARBShaderObjects.glUseProgramObjectARB(shader);
 		int sampler01 = ARBShaderObjects.glGetUniformLocationARB(shader, "sampler01");
@@ -84,13 +85,12 @@ public class TexturePlain extends AbstractObject {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureA);
 		ARBShaderObjects.glUniform1iARB(sampler01, 0);
 
-		//GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glLoadIdentity();
-		GL11.glTranslatef(0f, 0f, -3f);
+		GL11.glTranslatef(0f, -1f, -4f);
+		GL11.glRotatef(-90, 1, 0, 0);
 		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glBegin(GL11.GL_QUADS);
-			GL11.glColor3f(1f, 1f, 1f);
 			GL11.glTexCoord2f(0f, 0f);
 			GL11.glVertex3f(-1f, 1f, 0f);
 			GL11.glTexCoord2f(1f, 0f);
