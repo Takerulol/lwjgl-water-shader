@@ -13,22 +13,25 @@ import org.lwjgl.util.glu.GLU;
 
 import edu.fhooe.mtd360.watershader.objects.ColorCube;
 import edu.fhooe.mtd360.watershader.objects.ColorPlane;
+import edu.fhooe.mtd360.watershader.objects.SkyBox;
 import edu.fhooe.mtd360.watershader.objects.WaterPlane;
 //import edu.fhooe.mtd360.watershader.util.LightTool;
 import edu.fhooe.mtd360.watershader.util.Settings;
 
 public class Renderer{
 
-	private Vector<Renderable> objects;
+	private Vector<Renderable> backgroundObjects;
+	private Vector<Renderable> sceneObjects;
+	private WaterPlane water;
 	private int width;
 	private int height;
 	
 	private boolean mouseClicked = false;		//shows whether the left mousebutton is being held down
 	private int prevMouseX = 0;
 	private int prevMouseY = 0;	
-	private float camPosX = 0.f;
-	private float camPosY = 0.f;
-	private float camPosZ = 0.f;
+	public static float camPosX = 0.f;
+	public static float camPosY = 0.f;
+	public static float camPosZ = 0.f;
 	//private int camRoll = 0;
 	private int camPitch = 0;
 	private int camYaw = 0;
@@ -115,18 +118,20 @@ public class Renderer{
 	}
 
 	private void initObjects() {
-		addObject(new WaterPlane("images/wavemapA.png", "images/wavemapB.png"));
-		//addObject(new ColorCube(1f, .5f, 0f, 1f));
-		//addObject(new ColorPlane(0f, 0f, 1f, 1f));
-		
-		//LightTool.enableDirectionalLight();
+		addBackgroundObject(new SkyBox());
+	
+		addSceneObject(new WaterPlane("images/wavemapA.png","images/wavemapB.png"));
+//		addSceneObject(new ColorCube(1f, .5f, 0f, 1f));
+//		addSceneObject(new ColorPlane(0f, 0f, 1f, 1f));
 	}
+
 
 	private void setup() {
 
 		Settings.init();
 		
-		this.objects = new Vector<Renderable>();
+		this.backgroundObjects = new Vector<Renderable>();
+		this.sceneObjects = new Vector<Renderable>();
 		width = Settings.getIntSetting(Settings.WINDOW_WIDTH);
 		height = Settings.getIntSetting(Settings.WINDOW_HEIGHT);		
 		
@@ -161,12 +166,33 @@ public class Renderer{
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT |
 				GL11.GL_DEPTH_BUFFER_BIT);
 		
-		for(Renderable obj : this.objects) {
+		//render background
+		
+		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_LIGHTING);
+		for(Renderable obj : this.backgroundObjects) {
 			obj.render();
 		}
+		GL11.glPopAttrib();
+		
+		//render scene objects
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		for(Renderable obj : this.sceneObjects) {
+			obj.render();
+		}
+		
+		//if water is set, render it
+		if (water != null) water.render();
 	}
 
-	public void addObject(Renderable obj) {
-		this.objects.add(obj);
+	public void addSceneObject(Renderable obj) {
+		this.sceneObjects.add(obj);
 	}
+	
+	public void addBackgroundObject(Renderable obj) {
+		this.backgroundObjects.add(obj);
+	}
+
 }
