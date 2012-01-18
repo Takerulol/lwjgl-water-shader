@@ -115,7 +115,7 @@ public class Renderer{
 	}
 
 	private void initObjects() {
-		addObject(new WaterPlane("images/wavemap.png"));
+		addObject(new WaterPlane("images/wavemapA.png", "images/wavemapB.png"));
 		//addObject(new ColorCube(1f, .5f, 0f, 1f));
 		//addObject(new ColorPlane(0f, 0f, 1f, 1f));
 		
