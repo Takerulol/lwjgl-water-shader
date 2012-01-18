@@ -19,6 +19,18 @@ public class WaterPlane extends AbstractObject {
 
 	private int shader;
 	private int textureA = 0;
+	private int numberOfTiles = 200;							//number of quads in x and y direction
+	private float measureMesh = 20f;							//the size of the plane (both x and y)
+
+	private int numberOfWavesX = 2;								//first wave
+	private float offsetX = 0.f;								//for animation
+	private final float offsetXDelta = numberOfTiles * .0001f;	//added per render-cycle
+	private float amplitudeX = .5f;								//max amplitude (*2 because sin range -1 to +1 is scaled)
+
+	private int numberOfWavesY = 2;								//second wave
+	private float offsetY = .1f;								
+	private final float offsetYDelta = numberOfTiles * .0001f;
+	private float amplitudeY = .2f;
 	
 	public WaterPlane(String filename){		
 		if(new File(filename).exists()){		
@@ -29,6 +41,7 @@ public class WaterPlane extends AbstractObject {
 				 System.out.println("Texture could not be set up");
 			else
 				shader = ws.getProgram();
+			setupUniforms();
 		}
 		else{
 			System.out.println("File "+filename+" not found.");
@@ -72,34 +85,72 @@ public class WaterPlane extends AbstractObject {
 		return tmp.get(0);
 	}
 	
+	private void setupUniforms(){		
+		//setUniform3f("lightPos", 0.f, 1.f, 0.f);
+		setUniform1i("sampler01", 0);
+	}
+	
+	private int getUniformLoc(String name){
+		int temp = ARBShaderObjects.glGetUniformLocationARB(shader, name);
+		if(temp < 1)
+			System.out.println("Error setting up uniform \""+name+"\".");
+		return temp;
+	}
+	
+	private void setUniform1i(String name, int value){
+		ARBShaderObjects.glUniform1iARB(getUniformLoc(name), value);
+	}
+	
+	private void setUniform1f(String name, float value){
+		ARBShaderObjects.glUniform1fARB(getUniformLoc(name), value);
+	}
+	
+	private void setUniform3f(String name, float v0, float v1, float v2){
+		ARBShaderObjects.glUniform3fARB(getUniformLoc(name), v0, v1, v2);
+	}
+	
 	@Override
 	public void draw() {
 		
 		GL11.glLoadIdentity();
-
 		ARBShaderObjects.glUseProgramObjectARB(shader);
-		int sampler01 = ARBShaderObjects.glGetUniformLocationARB(shader, "sampler01");
-		if(sampler01<1)
-			System.out.println("Error accessing sampler01");
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureA);
-		ARBShaderObjects.glUniform1iARB(sampler01, 0);
-
-		GL11.glLoadIdentity();
-		GL11.glTranslatef(0f, -1f, -4f);
-		GL11.glRotatef(-90, 1, 0, 0);
+		setUniform1i("numWavesX", numberOfWavesX);
+		setUniform1f("offsetX", offsetX);
+		setUniform1f("amplitudeX", amplitudeX);
+		setUniform1i("numWavesY", numberOfWavesY);
+		setUniform1f("offsetY", offsetY);
+		setUniform1f("amplitudeY", amplitudeY);
 		
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureA);		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glBegin(GL11.GL_QUADS);
-			GL11.glTexCoord2f(0f, 0f);
-			GL11.glVertex3f(-1f, 1f, 0f);
-			GL11.glTexCoord2f(1f, 0f);
-			GL11.glVertex3f(1f, 1f, 0f);
-			GL11.glTexCoord2f(1f, 1f);
-			GL11.glVertex3f(1f, -1f, 0f);
-			GL11.glTexCoord2f(0f, 1f);
-			GL11.glVertex3f(-1f, -1f, 0f);
-		GL11.glEnd();
+		
+		GL11.glPushMatrix();
+			GL11.glNormal3f(0f, 1f, 0f);
+			GL11.glTranslatef(-2f, -1f, -4f);
+			GL11.glRotatef(-90, 1, 0, 0);
+			
+			float deltaMesh = measureMesh/numberOfTiles;
+			float deltaTex = 1f/numberOfTiles;
+			
+			for(int i = 0; i < numberOfTiles; i++){
+				float xMesh = i*deltaMesh;
+				float xTex = i*deltaTex;
+				GL11.glBegin(GL11.GL_QUAD_STRIP);
+					for(int j = 0; j < numberOfTiles; j++){
+						float yMesh = j*deltaMesh;
+						float yTex = j*deltaTex;
+						GL11.glTexCoord2f(xTex, yTex);
+						GL11.glVertex3f(xMesh, yMesh, 0f);
+						GL11.glTexCoord2f(xTex+deltaTex, yTex);
+						GL11.glVertex3f(xMesh+deltaMesh, yMesh, 0f);
+					}
+				GL11.glEnd();
+			}
+		GL11.glPopMatrix();
+		
+		offsetX+=offsetXDelta;
+		offsetY+=offsetYDelta;
 	}
 
 }

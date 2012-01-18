@@ -14,8 +14,7 @@ public class ColorPlane extends AbstractObject {
 		color[1] = g;
 		color[2] = b;
 		color[3] = a;
-		LambertShader ws = new LambertShader();
-		setShaderProgram(ws);
+		setShaderProgram(new LambertShader());
 	}
 	
 	@Override
