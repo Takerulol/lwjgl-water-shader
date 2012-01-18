@@ -19,8 +19,11 @@ public class WaterPlane extends AbstractObject {
 
 	private int shader;
 	private int textureA = 0;
+	private int textureB = 1;
 	private int numberOfTiles = 200;							//number of quads in x and y direction
-	private float measureMesh = 20f;							//the size of the plane (both x and y)
+	private float measureMesh = 20f;							//the size of the plane (both x and y)	
+	private float deltaMesh = measureMesh/numberOfTiles;
+	private float deltaTex = 1f/numberOfTiles;
 
 	private int numberOfWavesX = 2;								//first wave
 	private float offsetX = 0.f;								//for animation
@@ -32,19 +35,18 @@ public class WaterPlane extends AbstractObject {
 	private final float offsetYDelta = numberOfTiles * .0001f;
 	private float amplitudeY = .2f;
 	
-	public WaterPlane(String filename){		
-		if(new File(filename).exists()){		
+	public WaterPlane(String filenameA, String filenameB){		
+		if(new File(filenameA).exists() && new File(filenameB).exists()){
 			WaterShader ws = new WaterShader(1, 1);
 			setShaderProgram(ws);
-			textureA = setupTextures(filename);
-			if(textureA < 1)
-				 System.out.println("Texture could not be set up");
-			else
-				shader = ws.getProgram();
-			setupUniforms();
+			textureA = setupTextures(filenameA);
+			textureB = setupTextures(filenameB);
+			if(textureA < 1 || textureB < 1)
+				 System.out.println("One of the textures could not be set up");
+			shader = ws.getProgram();
 		}
 		else{
-			System.out.println("File "+filename+" not found.");
+			System.out.println("File "+filenameA+" or "+filenameB+" not found.");
 		}
 	}
 	
@@ -85,11 +87,6 @@ public class WaterPlane extends AbstractObject {
 		return tmp.get(0);
 	}
 	
-	private void setupUniforms(){		
-		//setUniform3f("lightPos", 0.f, 1.f, 0.f);
-		setUniform1i("sampler01", 0);
-	}
-	
 	private int getUniformLoc(String name){
 		int temp = ARBShaderObjects.glGetUniformLocationARB(shader, name);
 		if(temp < 1)
@@ -122,16 +119,19 @@ public class WaterPlane extends AbstractObject {
 		setUniform1f("amplitudeY", amplitudeY);
 		
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureA);		
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureA);
+		setUniform1i("sampler01", 0);
+		
+		GL13.glActiveTexture(GL13.GL_TEXTURE1);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureB);
+		setUniform1i("sampler02", 1);
+		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		
 		GL11.glPushMatrix();
 			GL11.glNormal3f(0f, 1f, 0f);
-			GL11.glTranslatef(-2f, -1f, -4f);
+			GL11.glTranslatef(-(measureMesh/2), -3f, -(measureMesh/2));
 			GL11.glRotatef(-90, 1, 0, 0);
-			
-			float deltaMesh = measureMesh/numberOfTiles;
-			float deltaTex = 1f/numberOfTiles;
 			
 			for(int i = 0; i < numberOfTiles; i++){
 				float xMesh = i*deltaMesh;
