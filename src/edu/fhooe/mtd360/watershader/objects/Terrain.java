@@ -1,7 +1,6 @@
 package edu.fhooe.mtd360.watershader.objects;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.*;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -9,21 +8,25 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.util.ResourceLoader;
+import edu.fhooe.mtd360.watershader.render.shader.LambertShader;
+import edu.fhooe.mtd360.watershader.util.ColorTool;
 
+/**
+ * Terrain created by heightmap
+ * 
+ * @author Takeru
+ *
+ */
 public class Terrain extends AbstractObject {
 
 	private BufferedImage img;
 	private float size;
 	private int listID;
-	private Texture tex;
 	
 	public Terrain(String heightmap, float size) {
+		setShaderProgram(new LambertShader("images/ground.png"));
 		this.size = size;
 		try {
-			tex = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("images/ground.png"));
 			img = ImageIO.read(new File(heightmap));
 		} catch (IOException e) {
 			System.out.println("cant load heightmap");
@@ -32,6 +35,9 @@ public class Terrain extends AbstractObject {
 		createTerrain();
 	}
 	
+	/**
+	 * creates the terrain and saves it in a displaylist
+	 */
 	private void createTerrain() {
 		float texCoordX = 0;
 		float texCoordY = 0;
@@ -66,17 +72,12 @@ public class Terrain extends AbstractObject {
 	@Override
 	public void draw() {
 		if(img != null) {
+			ColorTool.setDiffuseMaterialColor(0.5f, 0.1f, 0.1f, 1f);
 			glColor3f(0.5f, 0.1f, 0.1f);
 			glLoadIdentity();
 			glTranslatef(-size/2, -1f, -size/2);
-			
-			glDisable(GL_LIGHTING);
-			glEnable(GL_TEXTURE_2D);
-			glActiveTexture(GL_TEXTURE0);
-			tex.bind();
 			glCallList(listID);
 			
-			glDisable(GL_LIGHTING);
 		}
 	}
 }
