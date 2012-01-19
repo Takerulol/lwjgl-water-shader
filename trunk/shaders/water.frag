@@ -1,9 +1,13 @@
+
 uniform sampler2D sampler01;
 uniform sampler2D sampler02;
+uniform sampler2D sampler03;
+uniform samplerCube cubeMap;
 
 varying vec3 N1;
 varying vec3 N2;
 varying vec3 L;
+varying vec3 R;
 
 void main(){
 	float lambert1 = max(0.0, dot(normalize(L), normalize(N1)));
@@ -15,5 +19,9 @@ void main(){
 	vec3 colorA=colorA1 * lambertMixFactor + colorA2 * (1.0 - lambertMixFactor);
 	vec3 colorB=vec3(texture2D(sampler02, (gl_TexCoord[1].st))) * lambert2;
 	vec3 colorR=colorA * mixFactor + colorB * (1.0 - mixFactor);
-	gl_FragColor = vec4(colorR.xyz, 0.5);
+	
+	gl_FragColor = textureCube(cubeMap, R);
+	
+	//float shininess = 0.1;
+	//gl_FragColor = vec4(colorR.xyz, 0.5) * (1.0 - shininess) + shininess * textureCube(cubeMap, R);
 }

@@ -23,5 +23,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/slick-util.jar"/>
 	<classpathentry kind="lib" path="libs/fastpng-1.0.jar"/>
+	<classpathentry kind="lib" path="libs/PNGDecoder.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

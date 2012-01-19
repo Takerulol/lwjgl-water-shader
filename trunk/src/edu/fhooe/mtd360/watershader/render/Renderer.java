@@ -10,6 +10,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GLContext;
@@ -126,8 +128,7 @@ public class Renderer{
 	}
 
 	private void initObjects() {
-		addBackgroundObject(new SkyBox());
-	
+		addBackgroundObject(new SkyBox());	
 //		addSceneObject(new WaterPlane("images/wavemapA.png","images/wavemapB.png"));
 //		addSceneObject(new ColorCube(1f, .5f, 0f, 1f));
 //		addSceneObject(new ColorPlane(0f, 0f, 1f, 1f));
@@ -166,7 +167,7 @@ public class Renderer{
 			glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 			glEnable(GL_LIGHTING);
 			
-			generateFrameBuffer();
+//			generateFrameBuffer();
 		}
 		catch (LWJGLException exc){
 			System.out.println("Error creating display, exiting.");
@@ -215,7 +216,7 @@ public void renderGL() {
 		
 		// FBO render pass
 	
-		glViewport (0, 0, width, height);									// set The Current Viewport to the fbo size
+		glViewport (0, 0, width, height);								// set The Current Viewport to the fbo size
 
 		glBindTexture(GL_TEXTURE_2D, 0);								// unlink textures because if we dont it all is gonna fail
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebufferID);		// switch to rendering on our FBO
@@ -238,6 +239,8 @@ public void renderGL() {
 
 		// Normal render pass, draw cube with texture
 
+//		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+//		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
 		glEnable(GL_TEXTURE_2D);										// enable texturing
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);					// switch to rendering on the framebuffer
 
@@ -260,9 +263,7 @@ public void renderGL() {
 		
 
 		glDisable(GL_TEXTURE_2D);
-		glFlush ();
-		
-		
+		glFlush();		
 	}
 	
 	/**
@@ -275,7 +276,7 @@ public void renderGL() {
 
 		glViewport (0, 0, width, height);									// set The Current Viewport to the fbo size
 		
-		glBindTexture(GL_TEXTURE_2D, 0);								// unlink textures because if we dont it all is gonna fail
+		glBindTexture(GL_TEXTURE_2D, 1);								// unlink textures because if we dont it all is gonna fail
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebufferID);		// switch to rendering on our FBO
 		glDisable(GL_LIGHTING);
 		
