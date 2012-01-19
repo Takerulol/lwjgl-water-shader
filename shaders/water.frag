@@ -20,6 +20,6 @@ void main(){
 	vec3 colorR=colorA * mixFactor + colorB * (1.0 - mixFactor);
 	
 	//gl_FragColor = textureCube(cubeMap, R);	//pure reflection
-	float shininess = 0.5;
+	float shininess = 0.6;
 	gl_FragColor = vec4(colorR.xyz, 0.5) * (1.0 - shininess) + shininess * textureCube(cubeMap, R);
 }
