@@ -19,8 +19,7 @@ void main(){
 	vec3 colorB=vec3(texture2D(sampler02, (gl_TexCoord[1].st))) * lambert2;
 	vec3 colorR=colorA * mixFactor + colorB * (1.0 - mixFactor);
 	
-	gl_FragColor = textureCube(cubeMap, R);
-	//gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
-	//float shininess = 0.1;
-	//gl_FragColor = vec4(colorR.xyz, 0.5) * (1.0 - shininess) + shininess * textureCube(cubeMap, R);
+	//gl_FragColor = textureCube(cubeMap, R);	//pure reflection
+	float shininess = 0.5;
+	gl_FragColor = vec4(colorR.xyz, 0.5) * (1.0 - shininess) + shininess * textureCube(cubeMap, R);
 }
