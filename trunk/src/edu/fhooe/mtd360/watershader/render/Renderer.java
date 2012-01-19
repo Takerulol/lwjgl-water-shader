@@ -299,23 +299,38 @@ public class Renderer{
 		
 		glViewport (0, 0, cubeFaceSize, cubeFaceSize);					// set The Current Viewport to the fbo size
 
+		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
+		GLU.gluPerspective(45.0f, 1f, 0.1f, 100.0f);
+		//glRotatef(-camRoll, 0.f, 0.f, 1.f);
 		switch(i) {
-			case 0: glRotatef(0, 0, 0, 0); break;
-			case 1: glRotatef(90, 0, 1, 0); break;
-			case 2: glRotatef(-90, 0, 1, 0); break;
-			case 3: glRotatef(90, 1, 0, 0); break;
-			case 4: glRotatef(-90, 1, 0, 0); break;
-			case 5: glRotatef(180, 1, 0, 0); break;
+			case 0: glRotatef(90f, 0f, 1f, 0f); break;
+			case 1: glRotatef(-90f, 0f, 1f, 0f); break;
+			case 2: glRotatef(90f, 1f, 0f, 0f); break;
+			case 3: glRotatef(-90f, 1f, 0f, 0f); break;
+			case 4: glRotatef(0f, 0f, 0f, 0f); break;
+			case 5: glRotatef(180f, 1f, 0f, 0f); break;
 		}
 		glMatrixMode(GL_MODELVIEW);
+		
+//		glMatrixMode(GL_PROJECTION);
+//		GLU.gluPerspective(45.0f, 1, 0.2f, 100.0f);
+//		glLoadIdentity();
+
+//		glMatrixMode(GL_MODELVIEW);
+		
+//		glMatrixMode(GL_PROJECTION);
+//		glLoadIdentity();
+
+//		glRotatef(90, 0, 1, 0);
+//		glMatrixMode(GL_MODELVIEW);
 		
 		glBindTexture(GL_TEXTURE_2D, 0);								// unlink textures because if we dont it all is gonna fail
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebufferID);		// switch to rendering on our FBO
 		glDisable(GL_LIGHTING);
 
-		glClearColor (1.0f, 0.0f, 0.0f, 0.5f);
+		glClearColor (1.0f, 0.5f, 0.5f, 0.5f);
 		glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);			// Clear Screen And Depth Buffer on the fbo to red
 		glLoadIdentity ();												// Reset The Modelview Matrix
 		glTranslatef (0.0f, 0.0f, -6.0f);								// Translate 6 Units Into The Screen and then rotate
@@ -326,6 +341,7 @@ public class Renderer{
 		glColor3f(1,1,0);												// set color to yellow
 
 		glDisable(GL_DEPTH_TEST);
+		((SkyBox)this.backgroundObjects.get(0)).setCubeMapMode(true);
 		this.backgroundObjects.get(0).render();
 		glEnable(GL_DEPTH_TEST);
 		drawBox();														// draw the box
@@ -344,10 +360,12 @@ public class Renderer{
 		
 // #######################################################################################################
 		
+
 		updateCamera();
 		
 		//glEnable(GL_TEXTURE_2D);	
 		glViewport (0, 0, width, height);
+		
 
 		//bind old buffer
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);	
@@ -356,6 +374,7 @@ public class Renderer{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		glDisable(GL_DEPTH_TEST);
+		((SkyBox)this.backgroundObjects.get(0)).setCubeMapMode(false);
 		this.backgroundObjects.get(0).render();
 		glEnable(GL_DEPTH_TEST);
 		
