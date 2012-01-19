@@ -2,6 +2,7 @@ package edu.fhooe.mtd360.watershader.render;
 
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
 
 import java.util.Vector;
 
@@ -10,14 +11,11 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.Renderable;
 import org.lwjgl.util.glu.GLU;
-import org.newdawn.slick.opengl.Texture;
 
 import edu.fhooe.mtd360.watershader.objects.SkyBox;
 import edu.fhooe.mtd360.watershader.objects.WaterPlane;
@@ -42,9 +40,10 @@ public class Renderer{
 	private int camYaw = 0;
 	private final float DAMPER = .1f;
 	private int framebufferID;
-	private int colorTextureID;
+	public static int colorTextureID;
 	private int depthRenderBufferID;
 	public static float projectionFlipped = 1.0f;
+	private int cubeFaceSize = 512;
 	
 	public Renderer() {
 		setup();
@@ -54,6 +53,7 @@ public class Renderer{
 			render();
 			handleInputs();
 			updateCamera();
+			System.out.println(camPosX+" "+camPosY+" "+camPosZ);
 			Display.update();
 			Display.sync(60);
 		}
@@ -167,7 +167,8 @@ public class Renderer{
 			glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 			glEnable(GL_LIGHTING);
 			
-//			generateFrameBuffer();
+			generateFrameBufferCubeMap();
+
 		}
 		catch (LWJGLException exc){
 			System.out.println("Error creating display, exiting.");
@@ -212,29 +213,56 @@ public class Renderer{
 		}
 	}
 	
-public void renderGL() {
+	private void generateFrameBufferCubeMap() {
+		// check if GL_EXT_framebuffer_object can be use on this system
+		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
+			System.out.println("FBO not supported!!!");
+			System.exit(0);
+		}
+		else {
+			
+			System.out.println("FBO is supported!!!");
+			
+			//init texture
+			colorTextureID = glGenTextures();												// and a new texture used as a color buffer
+			
+			glBindTexture(GL_TEXTURE_CUBE_MAP, colorTextureID);						// Bind the colorbuffer texture
+			 glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+			 glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+			 glTexParameteri(GL_TEXTURE_CUBE_MAP, GL12.GL_TEXTURE_WRAP_R, GL12.GL_CLAMP_TO_EDGE);
+			 glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			 glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);				// make it linear filterd
+			
+			for(int i = 0; i<6;i++) {
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_RGBA8, cubeFaceSize, cubeFaceSize, 0,GL_RGBA, GL_INT, (java.nio.ByteBuffer) null);	// Create the texture data
+			}
+
+			
+			//init fbo
+			framebufferID = glGenFramebuffersEXT();											// create a new framebuffer
+			depthRenderBufferID = glGenRenderbuffersEXT();	
+			
+			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebufferID); 						// switch to the new framebuffer
+			// And finally a new depthbuffer
+			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_CUBE_MAP_POSITIVE_X, colorTextureID, 0); // attach it to the framebuffer
+
+			
+			
+			// initialize depth renderbuffer
+			glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depthRenderBufferID);				// bind the depth renderbuffer
+			glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL14.GL_DEPTH_COMPONENT24, cubeFaceSize, cubeFaceSize);	// get the data space for it
+			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,GL_DEPTH_ATTACHMENT_EXT,GL_RENDERBUFFER_EXT, depthRenderBufferID); // bind it to the renderbuffer
+	
+			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);									// Swithch back to normal framebuffer rendering
+
+		}
+	}
+	
+	public void renderGL() {
 		
 		// FBO render pass
-	
-		glViewport (0, 0, width, height);								// set The Current Viewport to the fbo size
-
-		glBindTexture(GL_TEXTURE_2D, 0);								// unlink textures because if we dont it all is gonna fail
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebufferID);		// switch to rendering on our FBO
-		glDisable(GL_LIGHTING);
-
-		glClearColor (1.0f, 0.0f, 0.0f, 0.5f);
-		glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);			// Clear Screen And Depth Buffer on the fbo to red
-		glLoadIdentity ();												// Reset The Modelview Matrix
-		glTranslatef (0.0f, 0.0f, -6.0f);								// Translate 6 Units Into The Screen and then rotate
-		glRotatef(1,0.0f,1.0f,0.0f);
-		glRotatef(1,1.0f,0.0f,0.0f);
-		glRotatef(1,0.0f,0.0f,1.0f);
-
-		glColor3f(1,1,0);												// set color to yellow
-		glDisable(GL_DEPTH_TEST);
-		this.backgroundObjects.get(0).render();
-		glEnable(GL_DEPTH_TEST);
-		drawBox();														// draw the box
+		//tex1
+		for(int i = 0; i < 6; i++) renderCubeSide(i);
 
 
 		// Normal render pass, draw cube with texture
@@ -263,7 +291,44 @@ public void renderGL() {
 		
 
 		glDisable(GL_TEXTURE_2D);
-		glFlush();		
+		glFlush ();
+	}
+
+	private void renderCubeSide(int i) {
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, colorTextureID, 0);
+		
+		glViewport (0, 0, cubeFaceSize, cubeFaceSize);					// set The Current Viewport to the fbo size
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		switch(i) {
+			case 0: glRotatef(0, 0, 0, 0); break;
+			case 1: glRotatef(90, 0, 1, 0); break;
+			case 2: glRotatef(-90, 0, 1, 0); break;
+			case 3: glRotatef(90, 1, 0, 0); break;
+			case 4: glRotatef(-90, 1, 0, 0); break;
+			case 5: glRotatef(180, 1, 0, 0); break;
+		}
+		glMatrixMode(GL_MODELVIEW);
+		
+		glBindTexture(GL_TEXTURE_2D, 0);								// unlink textures because if we dont it all is gonna fail
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebufferID);		// switch to rendering on our FBO
+		glDisable(GL_LIGHTING);
+
+		glClearColor (1.0f, 0.0f, 0.0f, 0.5f);
+		glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);			// Clear Screen And Depth Buffer on the fbo to red
+		glLoadIdentity ();												// Reset The Modelview Matrix
+		glTranslatef (0.0f, 0.0f, -6.0f);								// Translate 6 Units Into The Screen and then rotate
+		glRotatef(1,0.0f,1.0f,0.0f);
+		glRotatef(1,1.0f,0.0f,0.0f);
+		glRotatef(1,0.0f,0.0f,1.0f);
+
+		glColor3f(1,1,0);												// set color to yellow
+
+		glDisable(GL_DEPTH_TEST);
+		this.backgroundObjects.get(0).render();
+		glEnable(GL_DEPTH_TEST);
+		drawBox();														// draw the box
 	}
 	
 	/**
@@ -272,65 +337,41 @@ public void renderGL() {
 	private void render() {
 		//flipped rendering for reflection
 		projectionFlipped = 1.0f;
-		flipProjectionY();
 
-		glViewport (0, 0, width, height);									// set The Current Viewport to the fbo size
-		
-		glBindTexture(GL_TEXTURE_2D, 1);								// unlink textures because if we dont it all is gonna fail
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebufferID);		// switch to rendering on our FBO
-		glDisable(GL_LIGHTING);
-		
-		glClearColor (1.0f, 0.0f, 0.0f, 0.5f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		glLoadIdentity ();												// Reset The Modelview Matrix
-		glTranslatef (0.0f, 0.0f, -6.0f);								// Translate 6 Units Into The Screen and then rotate
-		glRotatef(1,0.0f,1.0f,0.0f);
-		glRotatef(1,1.0f,0.0f,0.0f);
-		glRotatef(1,0.0f,0.0f,1.0f);
-		
-		
-		glColor3f(1f, 1f, 0f);
-		glDisable(GL_DEPTH_TEST);
-		this.backgroundObjects.get(0).render();
-		glEnable(GL_DEPTH_TEST);
-		drawBox();
-		for(Renderable obj : this.sceneObjects) {
-			obj.render();
+		for (int i = 0; i < 6; i++) {
+			renderCubeSide(i);
 		}
-//		if (water != null) water.render();
 		
-//		renderWithoutWater();
-		
-		flipProjectionY();
 // #######################################################################################################
 		
+		updateCamera();
 		
-		glEnable(GL_TEXTURE_2D);	
-		glViewport (0, 0, width, height);									// set The Current Viewport to the fbo size
-		//real rendering
-											// enable texturing
+		//glEnable(GL_TEXTURE_2D);	
+		glViewport (0, 0, width, height);
+
+		//bind old buffer
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);	
 		
 		glClearColor (0.0f, 1.0f, 0.0f, 0.5f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		
-		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, colorTextureID);
-		
 		glDisable(GL_DEPTH_TEST);
 		this.backgroundObjects.get(0).render();
 		glEnable(GL_DEPTH_TEST);
 		
 //		renderWithoutWater();
 		
+//		glActiveTexture(GL_TEXTURE3);
+//		glDisable(GL_TEXTURE_2D);
+//		glEnable(GL_TEXTURE_CUBE_MAP);
+//		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+//		glBindTexture(GL_TEXTURE_CUBE_MAP, colorTextureID);
+//		glEnable(GL_LIGHTING);
+		drawBox();
 		
 		//if water is set, render it
 		if (water != null) water.render();
 		
-//		glEnable(GL_LIGHTING);
-		drawBox();
 		glDisable(GL_LIGHTING);
 		glFlush();
 	}
