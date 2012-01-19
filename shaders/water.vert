@@ -37,7 +37,7 @@ void main(){
 	//vec3 CD = normalize(CV);
 	//vec3 V = gl_Position.xyz;
 	//vec3 W = gl_Vertex.xyz;
-	vec3 I = CP-gl_Position.xyz;
+	vec3 I = CP-gl_Vertex.xyz;
 	
 	R = normalize(reflect(I, normalize(gl_Normal)));
 }

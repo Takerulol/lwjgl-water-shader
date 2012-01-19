@@ -312,13 +312,21 @@ public class Renderer{
 		glLoadIdentity();
 		GLU.gluPerspective(90.0f, 1f, 0.1f, 100.0f);
 		switch(i) {
-			case 0: glRotatef(90f, 0f, 1f, 0f); break;
-			case 1: glRotatef(-90f, 0f, 1f, 0f); break;
-			case 2: glRotatef(90f, 1f, 0f, 0f); break;
-			case 3: glRotatef(-90f, 1f, 0f, 0f); break;
-			case 4: glRotatef(0f, 0f, 0f, 0f); break;
-			case 5: glRotatef(180f, 1f, 0f, 0f); break;
+			case 0:	glRotatef(90f, 0f, 1f, 0f);
+				break;
+			case 1:	glRotatef(-90f, 0f, 1f, 0f);
+				break;
+			case 2:	glRotatef(90f, 1f, 0f, 0f);
+				break;
+			case 3: 
+				glRotatef(-90f, 1f, 0f, 0f);	
+				break;
+			case 4:	glRotatef(0f, 0f, 0f, 0f);
+				break;
+			case 5:	glRotatef(180f, 0f, 1f, 0f);
+				break;
 		}
+		glScalef(-1.f, 1.f, 1.f);
 		glMatrixMode(GL_MODELVIEW);
 		
 		glBindTexture(GL_TEXTURE_2D, 0);								// unlink textures because if we dont it all is gonna fail
