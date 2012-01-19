@@ -21,8 +21,8 @@ import edu.fhooe.mtd360.watershader.render.Renderer;
  */
 public class SkyBox extends AbstractObject {
 
-	private Vector<Texture> textures;
-	private boolean cubeMapMode;
+	private Vector<Texture> textures;	//textures of 6 faces
+	private boolean cubeMapMode;		//different mode if rendered to fbo cubemap 
 	
 	public SkyBox() {
 		
@@ -43,6 +43,10 @@ public class SkyBox extends AbstractObject {
 		
 	}
 	
+	/**
+	 * changes the mode
+	 * @param mode
+	 */
 	public void setCubeMapMode(boolean mode) {
 		this.cubeMapMode = mode;
 	}
@@ -54,13 +58,16 @@ public class SkyBox extends AbstractObject {
 		GL11.glPushMatrix();
 		
 		GL11.glLoadIdentity();
+		
+		//if rendered to scene, change position. else stay in middle of the world
 		if (!cubeMapMode) {
-			GL11.glTranslatef(Renderer.camPosX, Renderer.camPosY*Renderer.projectionFlipped, -Renderer.camPosZ);
+			GL11.glTranslatef(Renderer.camPosX, Renderer.camPosY, -Renderer.camPosZ);
 		}
 		else {
 			GL11.glTranslatef(0f,0f,0f);
 		}
 		
+		//enable texturing and active the right texture
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	   
@@ -133,7 +140,9 @@ public class SkyBox extends AbstractObject {
 	    GL11.glPopMatrix();
 	}
 
-	//clamp textures, that edges get dont create a line in between
+	/**
+	 * clamp textures, that edges get dont create a line in between
+	 */
 	private void clampToEdge() {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
