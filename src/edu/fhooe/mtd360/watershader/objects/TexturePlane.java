@@ -1,6 +1,5 @@
 package edu.fhooe.mtd360.watershader.objects;
 
-import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 

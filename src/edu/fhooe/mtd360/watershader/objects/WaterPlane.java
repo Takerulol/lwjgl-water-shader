@@ -5,31 +5,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL14;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
 import edu.fhooe.mtd360.watershader.render.Renderer;
 import edu.fhooe.mtd360.watershader.render.shader.WaterShader;
-import edu.fhooe.mtd360.watershader.util.ColorTool;
 
 public class WaterPlane extends AbstractObject {
 	
 	public WaterPlane(String filenameA, String filenameB){
 			waterShader = new WaterShader(filenameA, filenameB);
-			shader = waterShader.getProgram();
+			//shader = waterShader.getProgram();
+			setShaderProgram(waterShader);
 	}
 	
 	@Override
 	public void draw() {
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 		GL11.glLoadIdentity();
-		ARBShaderObjects.glUseProgramObjectARB(shader);
+		//ARBShaderObjects.glUseProgramObjectARB(shader);
 		waterShader.setUniform1i("numWavesX", waterShader.numberOfWavesX);
 		waterShader.setUniform1f("offsetX", waterShader.offsetX);
 		waterShader.setUniform1f("amplitudeX", waterShader.amplitudeX);
@@ -39,7 +36,7 @@ public class WaterPlane extends AbstractObject {
 		waterShader.setUniform1f("camPosX", Renderer.camPosX);
 		waterShader.setUniform1f("camPosY", Renderer.camPosY);
 		waterShader.setUniform1f("camPosZ", Renderer.camPosZ);
-
+		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -94,13 +91,13 @@ public class WaterPlane extends AbstractObject {
 				GL11.glEnd();
 			}
 		GL11.glPopMatrix();
-				
+		GL11.glPopAttrib();	
 		waterShader.offsetX+=waterShader.offsetXDelta;
 		waterShader.offsetY+=waterShader.offsetYDelta;
-		ARBShaderObjects.glUseProgramObjectARB(0);
+		//ARBShaderObjects.glUseProgramObjectARB(0);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glPopAttrib();
+		
 	}
 	
 	@SuppressWarnings("unused")
