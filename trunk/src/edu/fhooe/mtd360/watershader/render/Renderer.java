@@ -293,7 +293,7 @@ public void renderGL() {
 		glDisable(GL_DEPTH_TEST);
 		this.backgroundObjects.get(0).render();
 		glEnable(GL_DEPTH_TEST);
-//		drawBox();
+		drawBox();
 		for(Renderable obj : this.sceneObjects) {
 			obj.render();
 		}
@@ -327,8 +327,10 @@ public void renderGL() {
 		
 		//if water is set, render it
 		if (water != null) water.render();
+		
+//		glEnable(GL_LIGHTING);
+		drawBox();
 		glDisable(GL_LIGHTING);
-//		drawBox();
 		glFlush();
 	}
 
@@ -340,8 +342,10 @@ public void renderGL() {
 //		glBindTexture(GL_TEXTURE_2D, colorTextureID);
 ////		GL13.glClientActiveTexture(GL13.GL_TEXTURE0);
 ////		tex.bind();
-		
-	
+		glLoadIdentity();
+		glTranslatef(0f, 0f, -7f);
+		glDisable(GL_TEXTURE_2D);
+		glColor3f(1, 0, 0);
 		// this func just draws a perfectly normal box with some texture coordinates
 		glBegin(GL_QUADS);
 			// Front Face
