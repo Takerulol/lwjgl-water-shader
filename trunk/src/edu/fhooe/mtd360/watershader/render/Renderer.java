@@ -129,7 +129,7 @@ public class Renderer{
 	private void initObjects() {
 		addBackgroundObject(new SkyBox());
 	
-		addSceneObject(new WaterPlane("images/wavemapB.png","images/wavemapA.png"));
+		addSceneObject(new WaterPlane("images/wavemapA.png","images/wavemapB.png"));
 //		addSceneObject(new ColorCube(1f, .5f, 0f, 1f));
 //		addSceneObject(new ColorPlane(0f, 0f, 1f, 1f));
 		water = new ColorPlane(0f, 0f, 1f, 1f);
