@@ -197,7 +197,7 @@ public class Shader {
 	
 	public int getUniformLoc(String name){
 		int temp = ARBShaderObjects.glGetUniformLocationARB(shader, name);
-		if(temp < 1)
+		if(temp < 0)
 			System.out.println("Error setting up uniform \""+name+"\".");
 		return temp;
 	}

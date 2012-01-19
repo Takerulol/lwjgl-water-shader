@@ -34,6 +34,9 @@ public class WaterPlane extends AbstractObject {
 		waterShader.setUniform1i("sampler02", 2);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		
 		GL11.glPushMatrix();
 			GL11.glNormal3f(0f, 1f, 0f);
 			GL11.glTranslatef(-(waterShader.measureMesh/2), -3f, -(waterShader.measureMesh/2));
@@ -58,6 +61,7 @@ public class WaterPlane extends AbstractObject {
 		waterShader.offsetX+=waterShader.offsetXDelta;
 		waterShader.offsetY+=waterShader.offsetYDelta;
 		ARBShaderObjects.glUseProgramObjectARB(0);
+		GL11.glDisable(GL11.GL_BLEND);
 	}
 
 }
