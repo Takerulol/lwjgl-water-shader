@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import net.sourceforge.fastpng.PNGDecoder;
@@ -213,6 +214,12 @@ public class Shader {
 	public void setUniform3f(String name, float v0, float v1, float v2){
 		ARBShaderObjects.glUniform3fARB(getUniformLoc(name), v0, v1, v2);
 	}
+	
+	public void setMatrix4f(String name, boolean transpose, FloatBuffer matrices) {
+		ARBShaderObjects.glUniformMatrix4ARB(getUniformLoc(name), transpose, matrices);
+	}
+	
+
 	
 	/**
 	 * return id of the shader program
