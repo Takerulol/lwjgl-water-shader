@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Renderable;
 
 import edu.fhooe.mtd360.watershader.render.shader.Shader;
+import edu.fhooe.mtd360.watershader.render.shader.WaterShader;
 
 /**
  * Abstract class for implementing scene objects
@@ -14,7 +15,9 @@ import edu.fhooe.mtd360.watershader.render.shader.Shader;
  */
 public abstract class AbstractObject implements Renderable {
 	
-	private Shader shader = null;
+	protected Shader shaderFile = null;
+	protected WaterShader waterShader;
+	protected int shader;
 	
 	/**
 	 * the user can draw his object here
@@ -27,7 +30,7 @@ public abstract class AbstractObject implements Renderable {
 	@Override
 	public void render() {
 		//if shader given, use it
-		if (shader != null) ARBShaderObjects.glUseProgramObjectARB(this.shader.getProgram());
+		if (shaderFile != null) ARBShaderObjects.glUseProgramObjectARB(this.shaderFile.getProgram());
 		
 		GL11.glLoadIdentity();
 		
@@ -35,7 +38,7 @@ public abstract class AbstractObject implements Renderable {
 		this.draw();
 		
 		//if shader given, reset it
-		if (shader != null) ARBShaderObjects.glUseProgramObjectARB(0);
+		if (shaderFile != null) ARBShaderObjects.glUseProgramObjectARB(0);
 	}
 	
 	/**
@@ -44,6 +47,12 @@ public abstract class AbstractObject implements Renderable {
 	 * @param shader
 	 */
 	public void setShaderProgram(Shader shader){
-		this.shader = shader;
+		this.shaderFile = shader;
+		this.shader = shader.getProgram();
+	}
+	
+	public void setWaterShader(WaterShader shader){
+		waterShader = shader;
+		this.shader = shader.getProgram();
 	}
 }
