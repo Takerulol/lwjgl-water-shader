@@ -1,7 +1,6 @@
 
 uniform sampler2D sampler01;
 uniform sampler2D sampler02;
-uniform sampler2D sampler03;
 uniform samplerCube cubeMap;
 
 varying vec3 N1;
@@ -21,7 +20,7 @@ void main(){
 	vec3 colorR=colorA * mixFactor + colorB * (1.0 - mixFactor);
 	
 	gl_FragColor = textureCube(cubeMap, R);
-	
+	//gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
 	//float shininess = 0.1;
 	//gl_FragColor = vec4(colorR.xyz, 0.5) * (1.0 - shininess) + shininess * textureCube(cubeMap, R);
 }

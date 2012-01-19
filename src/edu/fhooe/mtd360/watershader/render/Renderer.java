@@ -53,7 +53,7 @@ public class Renderer{
 			render();
 			handleInputs();
 			updateCamera();
-			System.out.println(camPosX+" "+camPosY+" "+camPosZ);
+			//System.out.println(camPosX+" "+camPosY+" "+camPosZ);
 			Display.update();
 			Display.sync(60);
 		}
@@ -307,8 +307,8 @@ public class Renderer{
 		switch(i) {
 			case 0: glRotatef(90f, 0f, 1f, 0f); break;
 			case 1: glRotatef(-90f, 0f, 1f, 0f); break;
-			case 2: glRotatef(90f, 1f, 0f, 0f); break;
-			case 3: glRotatef(-90f, 1f, 0f, 0f); break;
+			case 2: glRotatef(-90f, 1f, 0f, 0f); break;
+			case 3: glRotatef(90f, 1f, 0f, 0f); break;
 			case 4: glRotatef(0f, 0f, 0f, 0f); break;
 			case 5: glRotatef(180f, 1f, 0f, 0f); break;
 		}
@@ -406,7 +406,7 @@ public class Renderer{
 		glLoadIdentity();
 		glTranslatef(0f, 0f, -7f);
 		glDisable(GL_TEXTURE_2D);
-		glColor3f(1, 0, 0);
+		glColor3f(1, 1, 0);
 		// this func just draws a perfectly normal box with some texture coordinates
 		glBegin(GL_QUADS);
 			// Front Face
