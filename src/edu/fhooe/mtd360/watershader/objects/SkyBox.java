@@ -22,10 +22,12 @@ import edu.fhooe.mtd360.watershader.render.Renderer;
 public class SkyBox extends AbstractObject {
 
 	private Vector<Texture> textures;
+	private boolean cubeMapMode;
 	
 	public SkyBox() {
 		
 		textures = new Vector<Texture>();
+		cubeMapMode = false;
 		
 		//load textures
 		try {
@@ -41,6 +43,10 @@ public class SkyBox extends AbstractObject {
 		
 	}
 	
+	public void setCubeMapMode(boolean mode) {
+		this.cubeMapMode = mode;
+	}
+	
 	@Override
 	public void draw() {
 		
@@ -48,7 +54,13 @@ public class SkyBox extends AbstractObject {
 		GL11.glPushMatrix();
 		
 		GL11.glLoadIdentity();
-		GL11.glTranslatef(Renderer.camPosX, Renderer.camPosY*Renderer.projectionFlipped, -Renderer.camPosZ);
+		if (!cubeMapMode) {
+			GL11.glTranslatef(Renderer.camPosX, Renderer.camPosY*Renderer.projectionFlipped, -Renderer.camPosZ);
+		}
+		else {
+			GL11.glTranslatef(0f,0f,0f);
+		}
+		
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	   
