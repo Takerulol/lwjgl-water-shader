@@ -15,7 +15,7 @@ public class WaterPlane extends AbstractObject {
 	
 	@Override
 	public void draw() {
-		
+		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 		GL11.glLoadIdentity();
 		ARBShaderObjects.glUseProgramObjectARB(shader);
 		waterShader.setUniform1i("numWavesX", waterShader.numberOfWavesX);
@@ -39,7 +39,7 @@ public class WaterPlane extends AbstractObject {
 		
 		GL11.glPushMatrix();
 			GL11.glNormal3f(0f, 1f, 0f);
-			GL11.glTranslatef(-(waterShader.measureMesh/2), -3f, -(waterShader.measureMesh/2));
+			GL11.glTranslatef(-(waterShader.measureMesh/2), -1f, -(waterShader.measureMesh/2));
 			GL11.glRotatef(-90, 1, 0, 0);
 			
 			for(int i = 0; i < waterShader.numberOfTiles; i++){
@@ -62,6 +62,8 @@ public class WaterPlane extends AbstractObject {
 		waterShader.offsetY+=waterShader.offsetYDelta;
 		ARBShaderObjects.glUseProgramObjectARB(0);
 		GL11.glDisable(GL11.GL_BLEND);
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glPopAttrib();
 	}
 
 }
