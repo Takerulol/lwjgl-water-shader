@@ -22,12 +22,12 @@ public class WaterShader extends Shader {
 	public int numberOfWavesX = 2;								//first wave
 	public float offsetX = 0.f;									//for animation
 	public final float offsetXDelta = numberOfTiles * .0001f;	//added per render-cycle
-	public float amplitudeX = .5f;								//max amplitude (*2 because sin range -1 to +1 is scaled)
+	public float amplitudeX = .3f;								//max amplitude (*2 because sin range -1 to +1 is scaled)
 
 	public int numberOfWavesY = 2;								//second wave
 	public float offsetY = .1f;								
 	public final float offsetYDelta = numberOfTiles * .0001f;
-	public float amplitudeY = .2f;
+	public float amplitudeY = .15f;
 
 	public WaterShader(String filenameA, String filenameB) {
 		super("water");

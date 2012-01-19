@@ -1,6 +1,7 @@
 package edu.fhooe.mtd360.watershader.objects;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -8,8 +9,9 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import edu.fhooe.mtd360.watershader.render.shader.LambertShader;
-import edu.fhooe.mtd360.watershader.util.ColorTool;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
 /**
  * Terrain created by heightmap
@@ -22,11 +24,12 @@ public class Terrain extends AbstractObject {
 	private BufferedImage img;
 	private float size;
 	private int listID;
+	private Texture tex;
 	
 	public Terrain(String heightmap, float size) {
-		setShaderProgram(new LambertShader("images/ground.png"));
 		this.size = size;
 		try {
+			tex = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("images/ground.png"));
 			img = ImageIO.read(new File(heightmap));
 		} catch (IOException e) {
 			System.out.println("cant load heightmap");
@@ -48,36 +51,46 @@ public class Terrain extends AbstractObject {
 		float rgb = 256 * 256 * 256;
 		
 		listID = glGenLists(1);
-		
+
 		glNewList(listID, GL_COMPILE);
+		
 			for(int x = 0; x < img.getWidth()-1; x++){
 				glBegin(GL_QUAD_STRIP);
 					for(int y = 0; y < img.getHeight(); y++){
-						texCoordX = size * x / img.getWidth();
-						texCoordY = size * y / img.getHeight();
+						texCoordX = (float)x / img.getWidth();
+						texCoordY = (float)y / img.getHeight();
+						System.out.println(texCoordX+" "+texCoordY);
 						//vertex 1
 						height = -(float)(img.getRGB(x, y) / rgb) * 3f - 1.5f;
 						glTexCoord2f(texCoordX, texCoordY);
 						glVertex3f(vertCoordX*x, height, vertCoordY*y);
 						//vertex 2
+						texCoordY = (y+1) / img.getWidth();
 						height = -(float)(img.getRGB(x+1, y) / rgb) * 3f - 1.5f;
 						glTexCoord2f(texCoordX, texCoordY);
 						glVertex3f(vertCoordX*(x+1), height, vertCoordY*y);
 					}
 				glEnd();
 			}
+		
 		glEndList();
+		
 	}
 
 	@Override
 	public void draw() {
 		if(img != null) {
-			ColorTool.setDiffuseMaterialColor(0.5f, 0.1f, 0.1f, 1f);
-			glColor3f(0.5f, 0.1f, 0.1f);
+			glDisable(GL_LIGHTING);
+			
+			glEnable(GL_TEXTURE_2D);
+			glActiveTexture(GL_TEXTURE0);
+				
+			//glColor3f(1f, 0f, 0f);
 			glLoadIdentity();
 			glTranslatef(-size/2, -1f, -size/2);
+			tex.bind();
 			glCallList(listID);
-			
+			glDisable(GL_TEXTURE_2D);
 		}
 	}
 }
