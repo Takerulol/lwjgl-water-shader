@@ -25,8 +25,8 @@ public class WaterPlane extends AbstractObject {
 		waterShader.setUniform1f("offsetY", waterShader.offsetY);
 		waterShader.setUniform1f("amplitudeY", waterShader.amplitudeY);
 		
-		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, waterShader.textureA);
+//		GL13.glActiveTexture(GL13.GL_TEXTURE1);
+//		GL11.glBindTexture(GL11.GL_TEXTURE_2D, waterShader.textureA);
 		waterShader.setUniform1i("sampler01", 1);
 		
 		GL13.glActiveTexture(GL13.GL_TEXTURE2);
