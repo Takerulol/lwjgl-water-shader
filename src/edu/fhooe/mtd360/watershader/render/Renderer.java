@@ -43,7 +43,7 @@ public class Renderer{
 	public static int colorTextureID;
 	private int depthRenderBufferID;
 	public static float projectionFlipped = 1.0f;
-	private int cubeFaceSize = 512;
+	private int cubeFaceSize = 1024;
 	
 	public Renderer() {
 		setup();
@@ -119,7 +119,7 @@ public class Renderer{
 	private void updateCamera(){
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		GLU.gluPerspective(45.0f, ((float)width / (float)height), 0.1f, 100.0f);
+		GLU.gluPerspective(90.0f, ((float)width / (float)height), 0.1f, 100.0f);
 		//glRotatef(-camRoll, 0.f, 0.f, 1.f);
 		glRotatef(-camPitch, 1.0f, 0.f, 0.f);
 		glRotatef(camYaw, 0.f, 1.f, 0.f);
@@ -361,6 +361,7 @@ public class Renderer{
 		for (int i = 0; i < 6; i++) {
 			renderCubeSide(i);
 		}
+		drawBox();
 		
 // #######################################################################################################
 		
@@ -408,7 +409,7 @@ public class Renderer{
 ////		GL13.glClientActiveTexture(GL13.GL_TEXTURE0);
 ////		tex.bind();
 		glLoadIdentity();
-		glTranslatef(0f, -1f, -7f);
+		glTranslatef(0f, 1f, -7f);
 		glDisable(GL_TEXTURE_2D);
 		glColor3f(1, 1, 0);
 		// this func just draws a perfectly normal box with some texture coordinates
