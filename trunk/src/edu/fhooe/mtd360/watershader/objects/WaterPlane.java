@@ -1,19 +1,15 @@
 package edu.fhooe.mtd360.watershader.objects;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
-import org.newdawn.slick.opengl.Texture;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
@@ -59,25 +55,26 @@ public class WaterPlane extends AbstractObject {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL13.GL_TEXTURE_CUBE_MAP);
 		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, 3);
-		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL14.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
-		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
-		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL12.GL_TEXTURE_WRAP_R, GL12.GL_CLAMP_TO_EDGE);
-		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-		ByteBuffer image = PNGtoBB("images/cubemapTest.png");
-		GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL11.GL_RGB8, 128, 128, 0, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, image);
-		GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL11.GL_RGB8, 128, 128, 0, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, image);
-		GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL11.GL_RGB8, 128, 128, 0, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, image);
-		GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL11.GL_RGB8, 128, 128, 0, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, image);
-		GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL11.GL_RGB8, 128, 128, 0, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, image);
-		GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL11.GL_RGB8, 128, 128, 0, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, image);
+		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, Renderer.colorTextureID);
+//		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL14.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
+//		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+//		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+//		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL12.GL_TEXTURE_WRAP_R, GL12.GL_CLAMP_TO_EDGE);
+//		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+//		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+//		ByteBuffer image = PNGtoBB("images/cubemapTest.png");
+//		GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL11.GL_RGB8, 128, 128, 0, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, image);
+//		GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL11.GL_RGB8, 128, 128, 0, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, image);
+//		GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL11.GL_RGB8, 128, 128, 0, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, image);
+//		GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL11.GL_RGB8, 128, 128, 0, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, image);
+//		GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL11.GL_RGB8, 128, 128, 0, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, image);
+//		GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL11.GL_RGB8, 128, 128, 0, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, image);
 		waterShader.setUniform1i("cubeMap", 3);
 		
 		GL11.glPushMatrix();
+			GL11.glLoadIdentity();
 			GL11.glNormal3f(0f, 1f, 0f);
-			GL11.glTranslatef(-(waterShader.measureMesh/2), -1f, -(waterShader.measureMesh/2));
+			GL11.glTranslatef(-(waterShader.measureMesh/2), -1f, (waterShader.measureMesh/2));
 			GL11.glRotatef(-90, 1, 0, 0);
 			
 			for(int i = 0; i < waterShader.numberOfTiles; i++){
@@ -104,6 +101,7 @@ public class WaterPlane extends AbstractObject {
 		GL11.glPopAttrib();
 	}
 	
+	@SuppressWarnings("unused")
 	private ByteBuffer PNGtoBB(String filename){
 		InputStream in;
 		ByteBuffer buf = null;
