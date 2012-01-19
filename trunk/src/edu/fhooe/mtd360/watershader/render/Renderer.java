@@ -1,13 +1,20 @@
 package edu.fhooe.mtd360.watershader.render;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 import java.util.Vector;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
+import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.Renderable;
 import org.lwjgl.util.glu.GLU;
 
@@ -15,14 +22,13 @@ import edu.fhooe.mtd360.watershader.objects.ColorCube;
 import edu.fhooe.mtd360.watershader.objects.ColorPlane;
 import edu.fhooe.mtd360.watershader.objects.SkyBox;
 import edu.fhooe.mtd360.watershader.objects.WaterPlane;
-//import edu.fhooe.mtd360.watershader.util.LightTool;
 import edu.fhooe.mtd360.watershader.util.Settings;
 
 public class Renderer{
 
 	private Vector<Renderable> backgroundObjects;
 	private Vector<Renderable> sceneObjects;
-	private WaterPlane water;
+	private Renderable water;
 	private int width;
 	private int height;
 	
@@ -36,6 +42,9 @@ public class Renderer{
 	private int camPitch = 0;
 	private int camYaw = 0;
 	private final float DAMPER = .1f;
+	private int framebufferID;
+	private int colorTextureID;
+	private int depthRenderBufferID;
 	
 	public Renderer() {
 		setup();
@@ -120,9 +129,10 @@ public class Renderer{
 	private void initObjects() {
 		addBackgroundObject(new SkyBox());
 	
-		addSceneObject(new WaterPlane("images/wavemapA.png","images/wavemapB.png"));
+		addSceneObject(new WaterPlane("images/wavemapB.png","images/wavemapA.png"));
 //		addSceneObject(new ColorCube(1f, .5f, 0f, 1f));
 //		addSceneObject(new ColorPlane(0f, 0f, 1f, 1f));
+		water = new ColorPlane(0f, 0f, 1f, 1f);
 	}
 
 
@@ -155,6 +165,8 @@ public class Renderer{
 			GL11.glDepthFunc(GL11.GL_LEQUAL);
 			GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 			GL11.glEnable(GL11.GL_LIGHTING);
+			
+			generateFrameBuffer();
 		}
 		catch (LWJGLException exc){
 			System.out.println("Error creating display, exiting.");
@@ -162,12 +174,126 @@ public class Renderer{
 		}
 	}
 
+	private void generateFrameBuffer() {
+		// check if GL_EXT_framebuffer_object can be use on this system
+		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
+			System.out.println("FBO not supported!!!");
+			System.exit(0);
+		} else {
+
+			System.out.println("FBO is supported!!!");
+
+			// init our fbo
+
+			framebufferID = EXTFramebufferObject.glGenFramebuffersEXT(); // create a new framebuffer
+			colorTextureID = GL11.glGenTextures(); // and a new texture used as a color buffer
+			depthRenderBufferID = EXTFramebufferObject.glGenRenderbuffersEXT(); // And finally a new depthbuffer
+
+			EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, framebufferID); // switch to the new framebuffer
+
+			// initialize color texture
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, colorTextureID); // Bind the colorbuffer texture
+			GL11.glTexParameterf(GL11.GL_TEXTURE_2D,GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR); // make it linear filterd
+			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8,width,height, 0,GL11.GL_RGBA, GL11.GL_INT, (java.nio.ByteBuffer) null); // Create the texture data
+			EXTFramebufferObject.glFramebufferTexture2DEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT,EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT,GL11.GL_TEXTURE_2D, colorTextureID, 0); // attach it to the framebuffer
+
+			// initialize depth renderbuffer
+			EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT,depthRenderBufferID); // bind the depth renderbuffer
+			EXTFramebufferObject.glRenderbufferStorageEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT,GL14.GL_DEPTH_COMPONENT24,width,height); // get the data space forit
+			EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT,EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT,EXTFramebufferObject.GL_RENDERBUFFER_EXT,depthRenderBufferID); // bind it to the renderbuffer
+
+			EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0); // Swithch back to normal framebuffer rendering
+
+		}
+	}
+	
+	/**
+	 * Main Render Method
+	 */
 	private void render() {
+		//flipped rendering for reflection
+		flipProjectionY();
+		enableFrameBuffer();
+		renderWithoutWater();
+		flipProjectionY();
+		
+		
+		//real rendering
+		GL11.glEnable(GL11.GL_TEXTURE_2D);										// enable texturing
+		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);	
+		
+		GL11.glViewport (0, 0, Settings.getIntSetting(Settings.WINDOW_WIDTH), Settings.getIntSetting(Settings.WINDOW_HEIGHT));									// set The Current Viewport to the fbo size
+		
+		renderWithoutWater();
+		
+		
+		//if water is set, render it
+		if (water != null) water.render();
+		GL11.glDisable(GL11.GL_LIGHTING);
+		drawBox();
+		GL11.glEnable(GL11.GL_LIGHTING);
+	}
+
+	private void drawBox() {
+		GL11.glLoadIdentity ();												// Reset The Modelview Matrix
+		GL11.glColor3f(1,1,1);	
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, colorTextureID);
+	
+			// this func just draws a perfectly normal box with some texture coordinates
+			GL11.glBegin(GL11.GL_QUADS);
+				// Front Face
+			GL11.glTexCoord2f(0.0f, 0.0f); GL11.glVertex3f(-1.0f, -1.0f,  1.0f);	// Bottom Left Of The Texture and Quad
+			GL11.glTexCoord2f(1.0f, 0.0f); GL11.glVertex3f( 1.0f, -1.0f,  1.0f);	// Bottom Right Of The Texture and Quad
+			GL11.glTexCoord2f(1.0f, 1.0f); GL11.glVertex3f( 1.0f,  1.0f,  1.0f);	// Top Right Of The Texture and Quad
+			GL11.glTexCoord2f(0.0f, 1.0f); GL11.glVertex3f(-1.0f,  1.0f,  1.0f);	// Top Left Of The Texture and Quad
+				// Back Face
+			GL11.glTexCoord2f(1.0f, 0.0f); GL11.glVertex3f(-1.0f, -1.0f, -1.0f);	// Bottom Right Of The Texture and Quad
+			GL11.glTexCoord2f(1.0f, 1.0f); GL11.glVertex3f(-1.0f,  1.0f, -1.0f);	// Top Right Of The Texture and Quad
+			GL11.glTexCoord2f(0.0f, 1.0f); GL11.glVertex3f( 1.0f,  1.0f, -1.0f);	// Top Left Of The Texture and Quad
+			GL11.glTexCoord2f(0.0f, 0.0f); GL11.glVertex3f( 1.0f, -1.0f, -1.0f);	// Bottom Left Of The Texture and Quad
+				// Top Face
+			GL11.glTexCoord2f(0.0f, 1.0f); GL11.glVertex3f(-1.0f,  1.0f, -1.0f);	// Top Left Of The Texture and Quad
+			GL11.glTexCoord2f(0.0f, 0.0f); GL11.glVertex3f(-1.0f,  1.0f,  1.0f);	// Bottom Left Of The Texture and Quad
+			GL11.glTexCoord2f(1.0f, 0.0f); GL11.glVertex3f( 1.0f,  1.0f,  1.0f);	// Bottom Right Of The Texture and Quad
+			GL11.glTexCoord2f(1.0f, 1.0f); GL11.glVertex3f( 1.0f,  1.0f, -1.0f);	// Top Right Of The Texture and Quad
+				// Bottom Face
+			GL11.glTexCoord2f(1.0f, 1.0f); GL11.glVertex3f(-1.0f, -1.0f, -1.0f);	// Top Right Of The Texture and Quad
+			GL11.glTexCoord2f(0.0f, 1.0f); GL11.glVertex3f( 1.0f, -1.0f, -1.0f);	// Top Left Of The Texture and Quad
+			GL11.	glTexCoord2f(0.0f, 0.0f); GL11.glVertex3f( 1.0f, -1.0f,  1.0f);	// Bottom Left Of The Texture and Quad
+			GL11.glTexCoord2f(1.0f, 0.0f); GL11.glVertex3f(-1.0f, -1.0f,  1.0f);	// Bottom Right Of The Texture and Quad
+				// Right face
+				GL11.glTexCoord2f(1.0f, 0.0f); GL11.glVertex3f( 1.0f, -1.0f, -1.0f);	// Bottom Right Of The Texture and Quad
+				GL11.glTexCoord2f(1.0f, 1.0f); GL11.glVertex3f( 1.0f,  1.0f, -1.0f);	// Top Right Of The Texture and Quad
+				GL11.glTexCoord2f(0.0f, 1.0f); GL11.glVertex3f( 1.0f,  1.0f,  1.0f);	// Top Left Of The Texture and Quad
+				GL11.glTexCoord2f(0.0f, 0.0f); GL11.glVertex3f( 1.0f, -1.0f,  1.0f);	// Bottom Left Of The Texture and Quad
+				// Left Face
+				GL11.glTexCoord2f(0.0f, 0.0f); GL11.glVertex3f(-1.0f, -1.0f, -1.0f);	// Bottom Left Of The Texture and Quad
+				GL11.glTexCoord2f(1.0f, 0.0f); GL11.glVertex3f(-1.0f, -1.0f,  1.0f);	// Bottom Right Of The Texture and Quad
+				GL11.glTexCoord2f(1.0f, 1.0f); GL11.glVertex3f(-1.0f,  1.0f,  1.0f);	// Top Right Of The Texture and Quad
+				GL11.glTexCoord2f(0.0f, 1.0f); GL11.glVertex3f(-1.0f,  1.0f, -1.0f);	// Top Left Of The Texture and Quad
+				GL11.glEnd();
+	}
+
+	private void enableFrameBuffer() {
+		GL11.glViewport (0, 0, width, height);									// set The Current Viewport to the fbo size
+		
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);								// unlink textures because if we dont it all is gonna fail
+		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, framebufferID);		// switch to rendering on our FBO
+
+		GL11.glClearColor (1.0f, 0.0f, 0.0f, 0.5f);
+	}
+
+	private void flipProjectionY() {
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glScalef(1, -1, 1);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+	}
+
+	private void renderWithoutWater() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT |
 				GL11.GL_DEPTH_BUFFER_BIT);
 		
 		//render background
-		
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
@@ -182,9 +308,6 @@ public class Renderer{
 		for(Renderable obj : this.sceneObjects) {
 			obj.render();
 		}
-		
-		//if water is set, render it
-		if (water != null) water.render();
 	}
 
 	public void addSceneObject(Renderable obj) {
