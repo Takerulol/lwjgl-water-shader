@@ -74,38 +74,38 @@ public class WaterPlane extends AbstractObject {
 		
 		GL11.glPushMatrix();
 			GL11.glLoadIdentity();
-//			GL11.glNormal3f(0f, 1f, 0f);
-//			GL11.glTranslatef(-(waterShader.measureMesh/2), -1f, (waterShader.measureMesh/2));
-//			GL11.glRotatef(-90, 1, 0, 0);
+			GL11.glNormal3f(0f, 1f, 0f);
+			GL11.glTranslatef(-(waterShader.measureMesh/2), -1f, (waterShader.measureMesh/2));
+			GL11.glRotatef(-90, 1, 0, 0);
 
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
-			GL11.glColor3f(0.f, 0.f, 1.f);
-			GL11.glBegin(GL11.GL_QUADS);
-				GL11.glNormal3f(0f, 1f, 0f);
-				GL11.glTexCoord2f(0f, 0f);		//links unten
-				GL11.glVertex3f(-10f, 0f, 10f);
-				GL11.glTexCoord2f(1f, 0f);		//rechts unten
-				GL11.glVertex3f(10f, 0f, 10f);
-				GL11.glTexCoord2f(1f, 1f);		//rechts oben
-				GL11.glVertex3f(10f, 0f, -10f);
-				GL11.glTexCoord2f(0f, 1f);		//links oben
-				GL11.glVertex3f(-10f, 0f, -10f);
-			GL11.glEnd();
+//			GL11.glEnable(GL11.GL_TEXTURE_2D);
+//			GL11.glColor3f(0.f, 0.f, 1.f);
+//			GL11.glBegin(GL11.GL_QUADS);
+//				GL11.glNormal3f(0f, 1f, 0f);
+//				GL11.glTexCoord2f(0f, 0f);		//links unten
+//				GL11.glVertex3f(-10f, 0f, 10f);
+//				GL11.glTexCoord2f(1f, 0f);		//rechts unten
+//				GL11.glVertex3f(10f, 0f, 10f);
+//				GL11.glTexCoord2f(1f, 1f);		//rechts oben
+//				GL11.glVertex3f(10f, 0f, -10f);
+//				GL11.glTexCoord2f(0f, 1f);		//links oben
+//				GL11.glVertex3f(-10f, 0f, -10f);
+//			GL11.glEnd();
 			
-//			for(int i = 0; i < waterShader.numberOfTiles; i++){
-//				float xMesh = i*waterShader.deltaMesh;
-//				float xTex = i*waterShader.deltaTex;
-//				GL11.glBegin(GL11.GL_QUAD_STRIP);
-//					for(int j = 0; j < waterShader.numberOfTiles; j++){
-//						float yMesh = j*waterShader.deltaMesh;
-//						float yTex = j*waterShader.deltaTex;
-//						GL11.glTexCoord2f(xTex, yTex);
-//						GL11.glVertex3f(xMesh, yMesh, 0f);
-//						GL11.glTexCoord2f(xTex+waterShader.deltaTex, yTex);
-//						GL11.glVertex3f(xMesh+waterShader.deltaMesh, yMesh, 0f);
-//					}
-//				GL11.glEnd();
-//			}
+			for(int i = 0; i < waterShader.numberOfTiles; i++){
+				float xMesh = i*waterShader.deltaMesh;
+				float xTex = i*waterShader.deltaTex;
+				GL11.glBegin(GL11.GL_QUAD_STRIP);
+					for(int j = 0; j < waterShader.numberOfTiles; j++){
+						float yMesh = j*waterShader.deltaMesh;
+						float yTex = j*waterShader.deltaTex;
+						GL11.glTexCoord2f(xTex, yTex);
+						GL11.glVertex3f(xMesh, yMesh, 0f);
+						GL11.glTexCoord2f(xTex+waterShader.deltaTex, yTex);
+						GL11.glVertex3f(xMesh+waterShader.deltaMesh, yMesh, 0f);
+					}
+				GL11.glEnd();
+			}
 		GL11.glPopMatrix();
 				
 		waterShader.offsetX+=waterShader.offsetXDelta;
