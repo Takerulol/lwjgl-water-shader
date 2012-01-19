@@ -202,7 +202,7 @@ public class Renderer{
 //		addSceneObject(new WaterPlane("images/wavemapA.png","images/wavemapB.png"));
 //		addSceneObject(new ColorCube(1f, .5f, 0f, 1f));
 //		addSceneObject(new ColorPlane(0f, 0f, 1f, 1f));
-		addSceneObject(new Terrain("images/heightmap.jpg", 10f));
+		addSceneObject(new Terrain("images/heightmap.jpg", 20f));
 //		addSceneObject(new TexturePlane("images/ground.png"));
 		water = new WaterPlane("images/wavemapA.png","images/wavemapB.png");
 	}
