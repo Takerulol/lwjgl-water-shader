@@ -5,13 +5,19 @@ import java.util.Vector;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.util.glu.GLU;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
 import edu.fhooe.mtd360.watershader.render.Renderer;
 
+/**
+ * 
+ * Simple Skybox
+ * 
+ * @author Takeru
+ *
+ */
 public class SkyBox extends AbstractObject {
 
 	private Vector<Texture> textures;
@@ -20,7 +26,7 @@ public class SkyBox extends AbstractObject {
 		
 		textures = new Vector<Texture>();
 		
-		
+		//load textures
 		try {
 			textures.add(TextureLoader.getTexture("JPG", ResourceLoader.getResourceAsStream("images/skybox/front.jpg"),GL11.GL_LINEAR));
 			textures.add(TextureLoader.getTexture("JPG", ResourceLoader.getResourceAsStream("images/skybox/left.jpg"),GL11.GL_LINEAR));
@@ -41,15 +47,10 @@ public class SkyBox extends AbstractObject {
 		GL11.glLoadIdentity();
 		GL11.glTranslatef(Renderer.camPosX, Renderer.camPosY, -Renderer.camPosZ);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
-	    // Just in case we set all vertices to white.
+	   
+		// Just in case we set all vertices to white.
 	    GL11.glColor4f(1,1,1,1);
 	 
-
-
-//		gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, height,
-//                GL_RGB, GL_UNSIGNED_BYTE, data );
-	    
-	    
 	    // Render the front quad
 	    clampToEdge();
 	    textures.get(0).bind();
@@ -116,6 +117,7 @@ public class SkyBox extends AbstractObject {
 	    GL11.glPopMatrix();
 	}
 
+	//clamp textures, that edges get dont create a line in between
 	private void clampToEdge() {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
