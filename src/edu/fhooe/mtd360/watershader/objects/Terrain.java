@@ -52,14 +52,15 @@ public class Terrain extends AbstractObject {
 		
 		listID = glGenLists(1);
 
+		//save in new list for redraw
 		glNewList(listID, GL_COMPILE);
 		
+			//generate vertexes + texcoords
 			for(int x = 0; x < img.getWidth()-1; x++){
 				glBegin(GL_QUAD_STRIP);
 					for(int y = 0; y < img.getHeight(); y++){
 						texCoordX = (float)x / img.getWidth();
 						texCoordY = (float)y / img.getHeight();
-						System.out.println(texCoordX+" "+texCoordY);
 						//vertex 1
 						height = -(float)(img.getRGB(x, y) / rgb) * 3f - 1.5f;
 						glTexCoord2f(texCoordX, texCoordY);
