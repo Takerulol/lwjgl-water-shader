@@ -127,6 +127,10 @@ public class Renderer{
 		glMatrixMode(GL_MODELVIEW);
 	}
 
+	
+	/**
+	 *  init all objects here
+	 */
 	private void initObjects() {
 		addBackgroundObject(new SkyBox());	
 //		addSceneObject(new WaterPlane("images/wavemapA.png","images/wavemapB.png"));
@@ -177,7 +181,7 @@ public class Renderer{
 	}
 	
 
-
+/*
 	private void generateFrameBuffer() {
 		// check if GL_EXT_framebuffer_object can be use on this system
 		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
@@ -212,6 +216,7 @@ public class Renderer{
 
 		}
 	}
+	*/
 	
 	private void generateFrameBufferCubeMap() {
 		// check if GL_EXT_framebuffer_object can be use on this system
@@ -258,6 +263,7 @@ public class Renderer{
 		}
 	}
 	
+	/*
 	public void renderGL() {
 		
 		// FBO render pass
@@ -293,38 +299,27 @@ public class Renderer{
 		glDisable(GL_TEXTURE_2D);
 		glFlush ();
 	}
+	*/
 
 	private void renderCubeSide(int i) {
+		glPushMatrix();
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, colorTextureID, 0);
 		
 		glViewport (0, 0, cubeFaceSize, cubeFaceSize);					// set The Current Viewport to the fbo size
 
-		
+		//rotate to show the right direction
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		GLU.gluPerspective(45.0f, 1f, 0.1f, 100.0f);
-		//glRotatef(-camRoll, 0.f, 0.f, 1.f);
+		GLU.gluPerspective(90.0f, 1f, 0.1f, 100.0f);
 		switch(i) {
 			case 0: glRotatef(90f, 0f, 1f, 0f); break;
 			case 1: glRotatef(-90f, 0f, 1f, 0f); break;
-			case 2: glRotatef(-90f, 1f, 0f, 0f); break;
-			case 3: glRotatef(90f, 1f, 0f, 0f); break;
+			case 2: glRotatef(90f, 1f, 0f, 0f); break;
+			case 3: glRotatef(-90f, 1f, 0f, 0f); break;
 			case 4: glRotatef(0f, 0f, 0f, 0f); break;
 			case 5: glRotatef(180f, 1f, 0f, 0f); break;
 		}
 		glMatrixMode(GL_MODELVIEW);
-		
-//		glMatrixMode(GL_PROJECTION);
-//		GLU.gluPerspective(45.0f, 1, 0.2f, 100.0f);
-//		glLoadIdentity();
-
-//		glMatrixMode(GL_MODELVIEW);
-		
-//		glMatrixMode(GL_PROJECTION);
-//		glLoadIdentity();
-
-//		glRotatef(90, 0, 1, 0);
-//		glMatrixMode(GL_MODELVIEW);
 		
 		glBindTexture(GL_TEXTURE_2D, 0);								// unlink textures because if we dont it all is gonna fail
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebufferID);		// switch to rendering on our FBO
@@ -341,10 +336,10 @@ public class Renderer{
 		glColor3f(1,1,0);												// set color to yellow
 
 		glDisable(GL_DEPTH_TEST);
-		((SkyBox)this.backgroundObjects.get(0)).setCubeMapMode(true);
 		this.backgroundObjects.get(0).render();
 		glEnable(GL_DEPTH_TEST);
 		drawBox();														// draw the box
+		glPopMatrix();
 	}
 	
 	/**
@@ -354,6 +349,7 @@ public class Renderer{
 		//flipped rendering for reflection
 		projectionFlipped = 1.0f;
 
+		((SkyBox)this.backgroundObjects.get(0)).setCubeMapMode(true);
 		for (int i = 0; i < 6; i++) {
 			renderCubeSide(i);
 		}
@@ -404,7 +400,7 @@ public class Renderer{
 ////		GL13.glClientActiveTexture(GL13.GL_TEXTURE0);
 ////		tex.bind();
 		glLoadIdentity();
-		glTranslatef(0f, 0f, -7f);
+		glTranslatef(0f, -1f, -7f);
 		glDisable(GL_TEXTURE_2D);
 		glColor3f(1, 1, 0);
 		// this func just draws a perfectly normal box with some texture coordinates
@@ -440,42 +436,6 @@ public class Renderer{
 			glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);	// Top Right Of The Texture and Quad
 			glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);	// Top Left Of The Texture and Quad
 		glEnd();
-	}
-
-	private void enableFrameBuffer() {
-		glViewport (0, 0, width, height);									// set The Current Viewport to the fbo size
-		
-		glBindTexture(GL_TEXTURE_2D, 0);								// unlink textures because if we dont it all is gonna fail
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebufferID);		// switch to rendering on our FBO
-
-		glClearColor (1.0f, 0.0f, 0.0f, 0.5f);
-		glDisable(GL_LIGHTING);
-	}
-
-	private void flipProjectionY() {
-		glMatrixMode(GL_PROJECTION);
-		glScalef(1, -1, 1);
-		glMatrixMode(GL_MODELVIEW);
-		projectionFlipped = -projectionFlipped;
-	}
-
-	private void renderWithoutWater() {
-		//render background
-		glPushAttrib(GL_ENABLE_BIT);
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
-		glDisable(GL_LIGHTING);
-		for(Renderable obj : this.backgroundObjects) {
-			obj.render();
-		}
-		glPopAttrib();
-		
-		//render scene objects
-		glEnable(GL_DEPTH_TEST);
-		
-		for(Renderable obj : this.sceneObjects) {
-			obj.render();
-		}
 	}
 
 	public void addSceneObject(Renderable obj) {
