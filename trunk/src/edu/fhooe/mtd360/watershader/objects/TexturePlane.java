@@ -16,7 +16,6 @@ public class TexturePlane extends AbstractObject {
 	public void draw() {
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 		GL11.glLoadIdentity();
-		ARBShaderObjects.glUseProgramObjectARB(shader);
 		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 //		GL11.glEnable(GL11.GL_BLEND);
@@ -38,5 +37,6 @@ public class TexturePlane extends AbstractObject {
 			GL11.glTexCoord2f(0f, 4f);		//links oben
 			GL11.glVertex3f(-10f, -2f, -10f);
 		GL11.glEnd();
+		GL11.glPopAttrib();
 	}
 }
