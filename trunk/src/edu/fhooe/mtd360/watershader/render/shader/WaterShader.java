@@ -28,6 +28,16 @@ public class WaterShader extends Shader {
 	public float offsetY = .1f;								
 	public final float offsetYDelta = numberOfTiles * .0001f;
 	public float amplitudeY = .15f;
+	
+//	public int numberOfWavesX = 0;								//deactivated waves for testing
+//	public float offsetX = 0;
+//	public final float offsetXDelta = 0;
+//	public float amplitudeX = 0;
+//
+//	public int numberOfWavesY = 0;
+//	public float offsetY = 0;								
+//	public final float offsetYDelta = 0;
+//	public float amplitudeY = 0;
 
 	public WaterShader(String filenameA, String filenameB) {
 		super("water");
