@@ -68,11 +68,11 @@ public class WaterPlane extends AbstractObject {
 //				GL11.glNormal3f(0f, 1f, 0f);
 //				GL11.glTexCoord2f(0f, 0f);		//links unten
 //				GL11.glVertex3f(-10f, 0f, 10f);
-//				GL11.glTexCoord2f(1f, 0f);		//rechts unten
+//				GL11.glTexCoord2f(10f, 0f);		//rechts unten
 //				GL11.glVertex3f(10f, 0f, 10f);
-//				GL11.glTexCoord2f(1f, 1f);		//rechts oben
+//				GL11.glTexCoord2f(10f, 10f);		//rechts oben
 //				GL11.glVertex3f(10f, 0f, -10f);
-//				GL11.glTexCoord2f(0f, 1f);		//links oben
+//				GL11.glTexCoord2f(0f, 10f);		//links oben
 //				GL11.glVertex3f(-10f, 0f, -10f);
 //			GL11.glEnd();
 			
