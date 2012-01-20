@@ -77,7 +77,6 @@ import org.lwjgl.util.glu.GLU;
 
 import edu.fhooe.mtd360.watershader.objects.SkyBox;
 import edu.fhooe.mtd360.watershader.objects.Terrain;
-import edu.fhooe.mtd360.watershader.objects.TexturePlane;
 import edu.fhooe.mtd360.watershader.objects.WaterPlane;
 import edu.fhooe.mtd360.watershader.util.Settings;
 
